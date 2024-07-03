@@ -23,3 +23,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "Destinator"
 include(":app")
 include(":core:designsystem")
+include(":feature:trips")

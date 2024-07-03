@@ -1,16 +1,17 @@
 package me.goldhardt.destinator.ui
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.rememberNavController
-import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.navigation.DestinatorNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +22,12 @@ fun DestinatorApp() {
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Destinator") // TODO extract
+                    Text(
+                        text = "Destinator".uppercase(),
+                        textAlign = TextAlign.Center,
+                        style = MaterialTheme.typography.labelLarge,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             )
         },
