@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +68,7 @@ fun EnterDestination(
     ) {
         Spacer(modifier = Modifier.height(120.dp))
         Text(
-            text = stringResource(R.string.title_select_destination_headline),
+            text = stringResource(R.string.title_trip_destination),
             style = MaterialTheme.typography.headlineSmall,
         )
         TextField(
@@ -103,7 +106,25 @@ fun EnterDestination(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectDates() {
-    Text(text = "Select dates")
+    val state = rememberDateRangePickerState()
+    DateRangePicker(
+        state = state,
+        dateFormatter = DatePickerDefaults.dateFormatter(
+            selectedDateSkeleton = "dd MMM",
+        ),
+        headline = {},
+        title = {
+            Text(
+                text = stringResource(R.string.title_trip_dates),
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        showModeToggle = false,
+        modifier = Modifier.padding(16.dp)
+    )
 }

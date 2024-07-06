@@ -9,5 +9,6 @@
 <!--    error_: for error messages.-->
     <string name="hint_enter_destination">London, Paris, anywhere… seriously!</string>
     <string name="cd_select_destination">Select destination button</string>
-    <string name="title_select_destination_headline">Where are we going?</string>
+    <string name="title_trip_destination">Where are we going?</string>
+    <string name="title_trip_dates">When are we going?</string>
 </resources>
