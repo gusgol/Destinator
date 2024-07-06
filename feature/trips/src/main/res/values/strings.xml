@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--    Prefixes:-->
+<!--    action_: for buttons and actions.-->
+<!--    title_: for titles of screens, dialogs, etc.-->
+<!--    msg_: for messages, including errors, information, and confirmations.-->
+<!--    label_: for labels of inputs, TextViews, etc.-->
+<!--    hint_: for input hints.-->
+<!--    error_: for error messages.-->
+    <string name="hint_enter_destination">London, Paris, anywhere… seriously!</string>
+    <string name="cd_select_destination">Select destination button</string>
+    <string name="title_select_destination_headline">Where are we going?</string>
+</resources>
