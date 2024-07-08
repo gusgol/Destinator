@@ -1,6 +1,10 @@
 package me.goldhardt.destinator.feature.trips.create
 
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
@@ -37,9 +42,9 @@ import me.goldhardt.destinator.feature.trips.R
 private enum class CreateTripStep {
     EnterDestination,
     SelectDates,
+    TripStyle,
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTripScreen() {
     var step by rememberSaveable {
@@ -49,7 +54,14 @@ fun CreateTripScreen() {
         CreateTripStep.EnterDestination -> EnterDestination {
             step = CreateTripStep.SelectDates
         }
-        CreateTripStep.SelectDates -> SelectDates()
+
+        CreateTripStep.SelectDates -> SelectDates {
+            step = CreateTripStep.TripStyle
+        }
+
+        CreateTripStep.TripStyle -> {
+            SelectTripStyle()
+        }
     }
 }
 
@@ -67,10 +79,7 @@ fun EnterDestination(
             .imePadding()
     ) {
         Spacer(modifier = Modifier.height(120.dp))
-        Text(
-            text = stringResource(R.string.title_trip_destination),
-            style = MaterialTheme.typography.headlineSmall,
-        )
+        CreateTripTitle(resourceId = R.string.title_trip_destination)
         TextField(
             value = text,
             textStyle = LocalTextStyle.current.copy(fontSize = 20.sp),
@@ -94,37 +103,120 @@ fun EnterDestination(
             )
         )
         Spacer(modifier = Modifier.weight(1f))
-        FloatingActionButton(
-            onClick = onNextClick,
-            Modifier.padding(48.dp)
-        ) {
-            Icon(
-                Icons.AutoMirrored.Filled.ArrowForward,
-                stringResource(R.string.cd_select_destination)
-            )
-        }
+        NextStepButton(onNextClick)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectDates() {
+fun SelectDates(
+    onNextClick: () -> Unit
+) {
     val state = rememberDateRangePickerState()
-    DateRangePicker(
-        state = state,
-        dateFormatter = DatePickerDefaults.dateFormatter(
-            selectedDateSkeleton = "dd MMM",
-        ),
-        headline = {},
-        title = {
-            Text(
-                text = stringResource(R.string.title_trip_dates),
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
-        showModeToggle = false,
-        modifier = Modifier.padding(16.dp)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        DateRangePicker(
+            state = state,
+            dateFormatter = DatePickerDefaults.dateFormatter(
+                selectedDateSkeleton = "dd MMM",
+            ),
+            headline = {},
+            title = {
+                CreateTripTitle(resourceId = R.string.title_trip_destination)
+            },
+            showModeToggle = false,
+            modifier = Modifier
+                .padding(16.dp)
+                .weight(1f)
+        )
+        NextStepButton(onNextClick)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SelectTripStyle() {
+    var selectedStyles by rememberSaveable { mutableStateOf(listOf<TripStyle>()) }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Spacer(modifier = Modifier.height(120.dp))
+        CreateTripTitle(resourceId = R.string.title_select_trip_style)
+        FlowRow(
+            horizontalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+            modifier = Modifier.padding(vertical = 32.dp)
+        ) {
+            TripStyle.entries.forEach {
+                TripStyleChip(
+                    tripStyle = it,
+                    isSelected = selectedStyles.contains(it),
+                    onSelectionChanged = { isSelected ->
+                        selectedStyles = if (isSelected) {
+                            selectedStyles + it
+                        } else {
+                            selectedStyles - it
+                        }
+                        Log.e("SelectedStyles", selectedStyles.toString())
+                    },
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CreateTripTitle(
+    resourceId: Int
+) {
+    Text(
+        text = stringResource(resourceId),
+        style = MaterialTheme.typography.headlineSmall,
     )
+}
+
+@Composable
+fun TripStyleChip(
+    tripStyle: TripStyle,
+    isSelected: Boolean,
+    modifier: Modifier = Modifier,
+    onSelectionChanged: (Boolean) -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = { onSelectionChanged(!isSelected) },
+        label = { Text(text = stringResource(id = tripStyle.displayName)) },
+        modifier = modifier
+    )
+}
+
+enum class TripStyle(val displayName: Int) {
+    MustSee(R.string.trip_style_must_see),
+    NatureAndOutdoors(R.string.trip_style_nature_and_outdoors),
+    Shopping(R.string.trip_style_shopping),
+    Nightlife(R.string.trip_style_nightlife),
+    Sports(R.string.trip_style_sports),
+    FamilyFriendly(R.string.trip_style_family_friendly),
+    CulturalExperiences(R.string.trip_style_cultural_experiences),
+    PhotographySpots(R.string.trip_style_photography_spots),
+    RomanticGetaways(R.string.trip_style_romantic_getaways)
+}
+
+@Composable
+private fun NextStepButton(
+    onNextClick: () -> Unit
+) {
+    FloatingActionButton(
+        onClick = onNextClick,
+        Modifier.padding(48.dp)
+    ) {
+        Icon(
+            Icons.AutoMirrored.Filled.ArrowForward,
+            stringResource(R.string.cd_select_destination)
+        )
+    }
 }

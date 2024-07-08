@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<!--    Prefixes:-->
-<!--    action_: for buttons and actions.-->
-<!--    title_: for titles of screens, dialogs, etc.-->
-<!--    msg_: for messages, including errors, information, and confirmations.-->
-<!--    label_: for labels of inputs, TextViews, etc.-->
-<!--    hint_: for input hints.-->
-<!--    error_: for error messages.-->
+    <!--    Prefixes:-->
+    <!--    action_: for buttons and actions.-->
+    <!--    title_: for titles of screens, dialogs, etc.-->
+    <!--    msg_: for messages, including errors, information, and confirmations.-->
+    <!--    label_: for labels of inputs, TextViews, etc.-->
+    <!--    hint_: for input hints.-->
+    <!--    error_: for error messages.-->
     <string name="hint_enter_destination">London, Paris, anywhere… seriously!</string>
     <string name="cd_select_destination">Select destination button</string>
     <string name="title_trip_destination">Where are we going?</string>
     <string name="title_trip_dates">When are we going?</string>
+
+    <!-- Trip Style options -->
+    <string name="trip_style_must_see">Must See</string>
+    <string name="trip_style_nature_and_outdoors">Nature and Outdoors</string>
+    <string name="trip_style_shopping">Shopping</string>
+    <string name="trip_style_nightlife">Nightlife</string>
+    <string name="trip_style_sports">Sports</string>
+    <string name="trip_style_family_friendly">Family Friendly</string>
+    <string name="trip_style_cultural_experiences">Cultural Experiences</string>
+    <string name="trip_style_photography_spots">Photography Spots</string>
+    <string name="trip_style_romantic_getaways">Romantic Getaways</string>
+    <string name="title_select_trip_style">What are we doing?</string>
 </resources>
