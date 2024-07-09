@@ -39,34 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import me.goldhardt.destinator.feature.trips.R
 
-private enum class CreateTripStep {
-    EnterDestination,
-    SelectDates,
-    TripStyle,
-}
-
 @Composable
-fun CreateTripScreen() {
-    var step by rememberSaveable {
-        mutableStateOf(CreateTripStep.EnterDestination)
-    }
-    when (step) {
-        CreateTripStep.EnterDestination -> EnterDestination {
-            step = CreateTripStep.SelectDates
-        }
-
-        CreateTripStep.SelectDates -> SelectDates {
-            step = CreateTripStep.TripStyle
-        }
-
-        CreateTripStep.TripStyle -> {
-            SelectTripStyle()
-        }
-    }
-}
-
-@Composable
-fun EnterDestination(
+fun SelectDestination(
     onNextClick: () -> Unit
 ) {
     var text by rememberSaveable { mutableStateOf("") }
