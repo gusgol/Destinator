@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Destinator</string>
+    <string name="cd_navigate_back">Navigate back</string>
 </resources>
