@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -53,6 +54,9 @@ dependencies {
     // Modules
     implementation(projects.core.designsystem)
     implementation(projects.feature.trips)
+    //    TODO Remove this after test
+    implementation(projects.core.data)
+    implementation(projects.core.ai)
 
     // Core
     implementation(libs.androidx.core.ktx)

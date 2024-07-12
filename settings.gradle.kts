@@ -24,3 +24,5 @@ rootProject.name = "Destinator"
 include(":app")
 include(":core:designsystem")
 include(":feature:trips")
+include(":core:ai")
+include(":core:data")
