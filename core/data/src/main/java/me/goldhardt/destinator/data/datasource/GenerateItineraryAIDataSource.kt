@@ -9,8 +9,9 @@ import me.goldhardt.destinator.core.ai.PromptService
 import me.goldhardt.destinator.data.model.GenerateItineraryResponse
 import me.goldhardt.destinator.data.model.ItineraryItem
 import java.io.IOException
+import javax.inject.Inject
 
-class GenerateItineraryAIDataSource(
+class GenerateItineraryAIDataSource @Inject constructor(
     private val promptService: PromptService,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : GenerateItineraryDataSource {

@@ -28,6 +28,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,12 +38,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavHostController
+import me.goldhardt.destinator.feature.trips.CREATE_TRIP_ROUTE
+import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.R
+
 
 @Composable
 fun SelectDestination(
-    onNextClick: () -> Unit
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry
 ) {
+    val parentEntry = remember(navBackStackEntry) {
+        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+    }
+    val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
     var text by rememberSaveable { mutableStateOf("") }
     val backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
 
@@ -77,15 +89,23 @@ fun SelectDestination(
             )
         )
         Spacer(modifier = Modifier.weight(1f))
-        NextStepButton(onNextClick)
+        NextStepButton {
+            viewModel.city = text
+            navController.navigate(CreateTripScreens.SELECT_DATES)
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SelectDates(
-    onNextClick: () -> Unit
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry
 ) {
+    val parentEntry = remember(navBackStackEntry) {
+        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+    }
+    val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
     val state = rememberDateRangePickerState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -105,13 +125,24 @@ fun SelectDates(
                 .padding(16.dp)
                 .weight(1f)
         )
-        NextStepButton(onNextClick)
+        NextStepButton {
+            viewModel.fromMs = state.selectedStartDateMillis ?: 0
+            viewModel.toMs = state.selectedEndDateMillis ?: 0
+            navController.navigate(CreateTripScreens.SELECT_TRIP_STYLE)
+        }
     }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SelectTripStyle() {
+fun SelectTripStyle(
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry
+) {
+    val parentEntry = remember(navBackStackEntry) {
+        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+    }
+    val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
     var selectedStyles by rememberSaveable { mutableStateOf(listOf<TripStyle>()) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -139,6 +170,10 @@ fun SelectTripStyle() {
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
+        }
+        NextStepButton {
+            viewModel.tripStyle = selectedStyles.map { it.name }
+            viewModel.generate()
         }
     }
 }
@@ -180,6 +215,9 @@ enum class TripStyle(val displayName: Int) {
     RomanticGetaways(R.string.trip_style_romantic_getaways)
 }
 
+/**
+ * TODO Extract to DS
+ */
 @Composable
 private fun NextStepButton(
     onNextClick: () -> Unit

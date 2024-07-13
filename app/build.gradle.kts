@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.hilt)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -54,9 +56,6 @@ dependencies {
     // Modules
     implementation(projects.core.designsystem)
     implementation(projects.feature.trips)
-    //    TODO Remove this after test
-    implementation(projects.core.data)
-    implementation(projects.core.ai)
 
     // Core
     implementation(libs.androidx.core.ktx)
@@ -70,6 +69,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
+
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
 
     // Tests
     testImplementation(libs.junit)
