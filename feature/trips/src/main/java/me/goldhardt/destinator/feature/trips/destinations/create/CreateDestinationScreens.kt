@@ -55,6 +55,7 @@ fun SelectDestination(
         navController.getBackStackEntry(CREATE_TRIP_ROUTE)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
+
     var text by rememberSaveable { mutableStateOf("") }
     val backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
 
@@ -106,7 +107,9 @@ fun SelectDates(
         navController.getBackStackEntry(CREATE_TRIP_ROUTE)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
+
     val state = rememberDateRangePickerState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -143,7 +146,9 @@ fun SelectTripStyle(
         navController.getBackStackEntry(CREATE_TRIP_ROUTE)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
+
     var selectedStyles by rememberSaveable { mutableStateOf(listOf<TripStyle>()) }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
