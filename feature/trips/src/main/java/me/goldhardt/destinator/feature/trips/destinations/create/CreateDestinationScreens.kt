@@ -1,4 +1,4 @@
-package me.goldhardt.destinator.feature.trips.create
+package me.goldhardt.destinator.feature.trips.destinations.create
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement

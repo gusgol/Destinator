@@ -4,10 +4,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import me.goldhardt.destinator.feature.trips.create.SelectDestination
-import me.goldhardt.destinator.feature.trips.create.SelectDates
-import me.goldhardt.destinator.feature.trips.create.SelectTripStyle
-import me.goldhardt.destinator.feature.trips.list.TripsListScreen
+import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestination
+import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
+import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
+import me.goldhardt.destinator.feature.trips.destinations.list.TripsListScreen
 
 const val TRIPS_ROUTE = "trips"
 const val CREATE_TRIP_ROUTE = "$TRIPS_ROUTE/create"
