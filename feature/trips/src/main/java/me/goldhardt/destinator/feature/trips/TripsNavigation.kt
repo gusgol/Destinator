@@ -33,7 +33,8 @@ fun NavGraphBuilder.tripsScreens(
     }
     navigation(
         route = CREATE_TRIP_ROUTE,
-        startDestination = CreateTripScreens.SELECT_DESTINATION) {
+        startDestination = CreateTripScreens.SELECT_DESTINATION
+    ) {
         composable(route = CreateTripScreens.SELECT_DESTINATION) {
             SelectDestination {
                 navController.navigate(CreateTripScreens.SELECT_DATES)
