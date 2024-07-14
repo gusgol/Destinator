@@ -19,6 +19,7 @@ hilt = "2.51.1"
 kotlinSerializationPlugin = "2.0.0"
 ksp = "2.0.0-1.0.21"
 hiltNavigationCompose = "1.2.0"
+room = "2.6.1"
 
 
 [libraries]
@@ -48,6 +49,9 @@ retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-k
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

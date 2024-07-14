@@ -19,7 +19,7 @@ abstract class GenerateItineraryModule {
     ): GenerateItineraryDataSource
 
     @Binds
-    abstract fun bingGenerateItineraryRepository(
+    abstract fun bindGenerateItineraryRepository(
         defaultGenerateItineraryRepository: DefaultGenerateItineraryRepository
     ): GenerateItineraryRepository
 }

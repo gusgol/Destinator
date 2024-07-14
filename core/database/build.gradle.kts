@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     id("com.google.devtools.ksp")
 }
 
 android {
-    namespace = "me.goldhardt.destinator.data"
+    namespace = "me.goldhardt.destinator.core.database"
     compileSdk = 34
 
     defaultConfig {
@@ -36,19 +35,19 @@ android {
 }
 
 dependencies {
-    // Modules
-    implementation(projects.core.ai)
-    implementation(projects.core.database)
+
+    // Room
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    ksp(libs.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     kspTest(libs.hilt.compiler)
 
-    implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
 }

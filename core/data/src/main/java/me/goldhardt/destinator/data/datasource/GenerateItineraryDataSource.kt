@@ -1,6 +1,6 @@
 package me.goldhardt.destinator.data.datasource
 
-import me.goldhardt.destinator.data.model.itinerary.AICreatedItineraryItem
+import me.goldhardt.destinator.data.model.itinerary.AIGenerateItineraryResponse
 
 interface GenerateItineraryDataSource {
     /**
@@ -11,5 +11,5 @@ interface GenerateItineraryDataSource {
         from: String,
         to: String,
         tripStyle: String
-    ): Result<List<AICreatedItineraryItem>>
+    ): Result<AIGenerateItineraryResponse>
 }

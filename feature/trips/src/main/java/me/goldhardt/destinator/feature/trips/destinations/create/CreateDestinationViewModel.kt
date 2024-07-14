@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import me.goldhardt.destinator.data.repository.DestinationsRepository
 import me.goldhardt.destinator.data.repository.GenerateItineraryRepository
 import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateDestinationViewModel @Inject constructor(
-    private val generateItineraryRepository: GenerateItineraryRepository
+    private val destinationsRepository: DestinationsRepository
 ) : ViewModel() {
 
     var city: String = ""
@@ -23,7 +24,7 @@ class CreateDestinationViewModel @Inject constructor(
         val prompt = "Generating itinerary for $city from ${Date(fromMs)} to ${Date(toMs)} with trip styles $tripStyle"
         Log.e("ViewModel", prompt)
         viewModelScope.launch {
-            val result = generateItineraryRepository.generateItinerary(
+            val result = destinationsRepository.createDestination(
                 city = city,
                 fromMs = fromMs,
                 toMs = toMs,
