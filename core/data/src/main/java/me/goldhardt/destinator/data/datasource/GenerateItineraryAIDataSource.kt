@@ -6,8 +6,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import me.goldhardt.destinator.core.ai.Prompt
 import me.goldhardt.destinator.core.ai.PromptService
-import me.goldhardt.destinator.data.model.GenerateItineraryResponse
-import me.goldhardt.destinator.data.model.ItineraryItem
+import me.goldhardt.destinator.data.model.itinerary.AIGenerateItineraryResponse
+import me.goldhardt.destinator.data.model.itinerary.AICreatedItineraryItem
 import java.io.IOException
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ class GenerateItineraryAIDataSource @Inject constructor(
         from: String,
         to: String,
         tripStyle: String
-    ): Result<List<ItineraryItem>> {
+    ): Result<List<AICreatedItineraryItem>> {
         val responseJson = withContext(ioDispatcher) {
             promptService.process(
                 GenerateItineraryPrompt(
@@ -34,7 +34,7 @@ class GenerateItineraryAIDataSource @Inject constructor(
         }
         return try {
             responseJson.getOrNull()?.let { json ->
-                val response = Json.decodeFromString<GenerateItineraryResponse>(json)
+                val response = Json.decodeFromString<AIGenerateItineraryResponse>(json)
                 Result.success(response.itinerary)
             } ?: Result.failure(
                 IOException("Failed to generate itinerary.")

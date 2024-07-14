@@ -1,9 +1,9 @@
-package me.goldhardt.destinator.data.model
+package me.goldhardt.destinator.data.model.itinerary
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ItineraryItem(
+data class AICreatedItineraryItem(
     val date: Long,
     val name: String,
     val description: String,
