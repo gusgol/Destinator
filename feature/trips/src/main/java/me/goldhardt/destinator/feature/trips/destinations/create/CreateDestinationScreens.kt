@@ -1,18 +1,31 @@
 package me.goldhardt.destinator.feature.trips.destinations.create
 
 import android.util.Log
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,13 +48,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextMotion
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.launch
 import me.goldhardt.destinator.feature.trips.CREATE_TRIP_ROUTE
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.R
@@ -179,7 +202,112 @@ fun SelectTripStyle(
         NextStepButton {
             viewModel.tripStyle = selectedStyles.map { it.name }
             viewModel.generate()
+            navController.navigate(CreateTripScreens.GENERATING_ITINERARY)
         }
+    }
+}
+
+enum class IconPosition {
+    Start, Finish
+}
+
+@Composable
+fun GeneratingItinerary() {
+    val configuration = LocalConfiguration.current
+    val height = configuration.screenHeightDp.dp
+    val width = configuration.screenWidthDp.dp
+
+    var animationState by remember { mutableStateOf(IconPosition.Start) }
+
+    // Plane 1
+    val plane1: Dp by animateDpAsState(
+        if (animationState == IconPosition.Start) 64.dp else -height,
+        keyframes {
+            durationMillis = 10_000
+        }, label = "plane1"
+    )
+
+    // Plane 2
+    val plane2: Dp by animateDpAsState(
+        if (animationState == IconPosition.Start) 0.dp else (-width - 64.dp),
+        keyframes {
+            durationMillis = 15_000
+        }, label = "plane2"
+    )
+
+    // Plane 3
+    val plane3: Dp by animateDpAsState(
+        if (animationState == IconPosition.Start) 0.dp else (width + 64.dp),
+        keyframes {
+            durationMillis = 8_000
+        }, label = "plane3"
+    )
+
+    // Text
+    val infiniteTransition = rememberInfiniteTransition(label = "text")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.05f,
+        animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse),
+        label = "scale"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+    )  {
+        Image(
+            painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_plane),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(horizontal = 48.dp)
+                .size(32.dp)
+                .absoluteOffset(y = plane1)
+        )
+        Image(
+            painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_plane),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(vertical = 48.dp)
+                .size(32.dp)
+                .absoluteOffset(x = plane2)
+                .graphicsLayer(rotationZ = -90f)
+
+        )
+        Image(
+            painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_plane),
+            contentDescription = null,
+            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(vertical = 64.dp)
+                .size(32.dp)
+                .absoluteOffset(x = plane3)
+                .graphicsLayer(rotationZ = 90f)
+
+        )
+        Text(
+            text = stringResource(R.string.title_generating_itinerary).uppercase(),
+            maxLines = 3,
+            style = MaterialTheme.typography.titleLarge.copy(textMotion = TextMotion.Animated),
+            textAlign = TextAlign.Center,
+            lineHeight = 20.sp,
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                    transformOrigin = TransformOrigin.Center
+                }
+                .align(Alignment.Center)
+        )
+    }
+
+    LaunchedEffect("airplanes") {
+        animationState = IconPosition.Finish
     }
 }
 

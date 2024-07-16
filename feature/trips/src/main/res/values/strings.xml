@@ -23,4 +23,5 @@
     <string name="trip_style_photography_spots">Photography Spots</string>
     <string name="trip_style_romantic_getaways">Romantic Getaways</string>
     <string name="title_select_trip_style">What are we doing?</string>
+    <string name="title_generating_itinerary">Generating\nitinerary</string>
 </resources>
