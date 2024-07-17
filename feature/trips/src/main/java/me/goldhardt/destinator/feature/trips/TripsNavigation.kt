@@ -12,10 +12,12 @@ import me.goldhardt.destinator.feature.trips.destinations.create.GeneratingItine
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestination
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
+import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
 import me.goldhardt.destinator.feature.trips.destinations.list.TripsListScreen
 
 const val TRIPS_ROUTE = "trips"
 const val CREATE_TRIP_ROUTE = "$TRIPS_ROUTE/create"
+const val DESTINATION_DETAIL = "$TRIPS_ROUTE/detail"
 
 /**
  * Nested navigation for create trip
@@ -51,7 +53,12 @@ fun NavGraphBuilder.tripsScreens(
             SelectTripStyle(navController, it)
         }
         composable(route = GENERATING_ITINERARY) {
-            GeneratingItinerary()
+            GeneratingItinerary(navController, it)
         }
+    }
+    composable(
+        route = DESTINATION_DETAIL
+    ) {
+        DestinationDetail()
     }
 }

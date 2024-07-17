@@ -24,4 +24,6 @@
     <string name="trip_style_romantic_getaways">Romantic Getaways</string>
     <string name="title_select_trip_style">What are we doing?</string>
     <string name="title_generating_itinerary">Generating\nitinerary</string>
+    <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>
+    <string name="action_try_again">Try again!</string>
 </resources>

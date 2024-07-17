@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
@@ -56,16 +55,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextMotion
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import kotlinx.coroutines.launch
 import me.goldhardt.destinator.feature.trips.CREATE_TRIP_ROUTE
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
+import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL
 import me.goldhardt.destinator.feature.trips.R
 
 
@@ -79,7 +79,7 @@ fun SelectDestination(
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
 
-    var text by rememberSaveable { mutableStateOf("") }
+    var selectedCity by rememberSaveable { mutableStateOf("") }
     val backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
 
     Column(
@@ -91,9 +91,9 @@ fun SelectDestination(
         Spacer(modifier = Modifier.height(120.dp))
         CreateTripTitle(resourceId = R.string.title_trip_destination)
         TextField(
-            value = text,
+            value = selectedCity,
             textStyle = LocalTextStyle.current.copy(fontSize = 20.sp),
-            onValueChange = { text = it },
+            onValueChange = { selectedCity = it },
             placeholder = {
                 Text(
                     stringResource(R.string.hint_enter_destination),
@@ -114,7 +114,7 @@ fun SelectDestination(
         )
         Spacer(modifier = Modifier.weight(1f))
         NextStepButton {
-            viewModel.city = text
+            viewModel.setCity(selectedCity)
             navController.navigate(CreateTripScreens.SELECT_DATES)
         }
     }
@@ -152,8 +152,10 @@ fun SelectDates(
                 .weight(1f)
         )
         NextStepButton {
-            viewModel.fromMs = state.selectedStartDateMillis ?: 0
-            viewModel.toMs = state.selectedEndDateMillis ?: 0
+            viewModel.setDates(
+                state.selectedStartDateMillis ?: 0,
+                state.selectedEndDateMillis ?: 0
+            )
             navController.navigate(CreateTripScreens.SELECT_TRIP_STYLE)
         }
     }
@@ -200,28 +202,79 @@ fun SelectTripStyle(
             }
         }
         NextStepButton {
-            viewModel.tripStyle = selectedStyles.map { it.name }
-            viewModel.generate()
+            viewModel.setTripStyle(
+                selectedStyles.map { it.name }
+            )
             navController.navigate(CreateTripScreens.GENERATING_ITINERARY)
         }
     }
 }
 
-enum class IconPosition {
+enum class PlaneAnimationState {
     Start, Finish
 }
 
 @Composable
-fun GeneratingItinerary() {
+fun GeneratingItinerary(
+    navController: NavHostController,
+    navBackStackEntry: NavBackStackEntry
+) {
+    val parentEntry = remember(navBackStackEntry) {
+        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+    }
+    val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (uiState) {
+        is CreateDestinationUiState.Creating -> {
+            viewModel.generate()
+        }
+        CreateDestinationUiState.Failed -> {
+            GenerateItineraryFailed(viewModel)
+        }
+        CreateDestinationUiState.Generated -> {
+            navController.navigate(DESTINATION_DETAIL) {
+                popUpTo(navController.graph.findStartDestination().id)
+            }
+        }
+        is CreateDestinationUiState.Processing -> {
+            ProcessingItineraryRequest()
+        }
+    }
+}
+
+@Composable
+private fun GenerateItineraryFailed(viewModel: CreateDestinationViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = stringResource(R.string.error_failed_generate_itinerary),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        Button(
+            onClick = { viewModel.generate() }
+        ) {
+            Text(text = stringResource(R.string.action_try_again))
+        }
+    }
+}
+
+@Composable
+fun ProcessingItineraryRequest() {
     val configuration = LocalConfiguration.current
     val height = configuration.screenHeightDp.dp
     val width = configuration.screenWidthDp.dp
 
-    var animationState by remember { mutableStateOf(IconPosition.Start) }
+    var animationState by remember { mutableStateOf(PlaneAnimationState.Start) }
 
     // Plane 1
     val plane1: Dp by animateDpAsState(
-        if (animationState == IconPosition.Start) 64.dp else -height,
+        if (animationState == PlaneAnimationState.Start) 64.dp else -height,
         keyframes {
             durationMillis = 10_000
         }, label = "plane1"
@@ -229,7 +282,7 @@ fun GeneratingItinerary() {
 
     // Plane 2
     val plane2: Dp by animateDpAsState(
-        if (animationState == IconPosition.Start) 0.dp else (-width - 64.dp),
+        if (animationState == PlaneAnimationState.Start) 0.dp else (-width - 64.dp),
         keyframes {
             durationMillis = 15_000
         }, label = "plane2"
@@ -237,7 +290,7 @@ fun GeneratingItinerary() {
 
     // Plane 3
     val plane3: Dp by animateDpAsState(
-        if (animationState == IconPosition.Start) 0.dp else (width + 64.dp),
+        if (animationState == PlaneAnimationState.Start) 0.dp else (width + 64.dp),
         keyframes {
             durationMillis = 8_000
         }, label = "plane3"
@@ -307,7 +360,7 @@ fun GeneratingItinerary() {
     }
 
     LaunchedEffect("airplanes") {
-        animationState = IconPosition.Finish
+        animationState = PlaneAnimationState.Finish
     }
 }
 

@@ -1,36 +1,103 @@
 package me.goldhardt.destinator.feature.trips.destinations.create
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.goldhardt.destinator.data.repository.DestinationsRepository
-import me.goldhardt.destinator.data.repository.GenerateItineraryRepository
-import java.util.Date
 import javax.inject.Inject
+
+interface ItineraryRequest {
+    val city: String
+    val fromMs: Long
+    val toMs: Long
+    val tripStyle: List<String>
+}
+
+sealed class CreateDestinationUiState {
+
+    data class Creating(
+        override val city: String = "",
+        override val fromMs: Long = 0,
+        override val toMs: Long = 0,
+        override val tripStyle: List<String> = listOf()
+    ) : CreateDestinationUiState(), ItineraryRequest
+
+    data class Processing(
+        override val city: String,
+        override val fromMs: Long,
+        override val toMs: Long,
+        override val tripStyle: List<String>
+    ) : CreateDestinationUiState(), ItineraryRequest
+
+    data object Generated : CreateDestinationUiState()
+
+    data object Failed : CreateDestinationUiState()
+}
 
 @HiltViewModel
 class CreateDestinationViewModel @Inject constructor(
     private val destinationsRepository: DestinationsRepository
 ) : ViewModel() {
 
-    var city: String = ""
-    var fromMs: Long = 0
-    var toMs: Long = 0
-    var tripStyle: List<String> = listOf()
+    private val _uiState = MutableStateFlow<CreateDestinationUiState>(CreateDestinationUiState.Creating())
+    val uiState: StateFlow<CreateDestinationUiState> = _uiState
 
     fun generate() {
-        val prompt = "Generating itinerary for $city from ${Date(fromMs)} to ${Date(toMs)} with trip styles $tripStyle"
-        Log.e("ViewModel", prompt)
+        val itineraryRequest = _uiState.value as? ItineraryRequest ?: return
         viewModelScope.launch {
-            val result = destinationsRepository.createDestination(
-                city = city,
-                fromMs = fromMs,
-                toMs = toMs,
-                tripStyleList = tripStyle
+            _uiState.tryEmit(
+                CreateDestinationUiState.Processing(
+                    city = itineraryRequest.city,
+                    fromMs = itineraryRequest.fromMs,
+                    toMs = itineraryRequest.toMs,
+                    tripStyle = itineraryRequest.tripStyle
+                )
             )
-            Log.e("ViewModel", result.toString())
+            val result = destinationsRepository.createDestination(
+                city = itineraryRequest.city,
+                fromMs = itineraryRequest.fromMs,
+                toMs = itineraryRequest.toMs,
+                tripStyleList = itineraryRequest.tripStyle
+            )
+            if (result.isSuccess) {
+                _uiState.tryEmit(CreateDestinationUiState.Generated)
+            } else {
+                _uiState.tryEmit(CreateDestinationUiState.Failed)
+            }
+        }
+    }
+
+    fun setCity(city: String) {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is CreateDestinationUiState.Creating -> currentState.copy(city = city)
+                is CreateDestinationUiState.Processing -> currentState.copy(city = city)
+                else -> currentState
+            }
+        }
+    }
+
+    fun setDates(fromMs: Long, toMs: Long) {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is CreateDestinationUiState.Creating -> currentState.copy(fromMs = fromMs, toMs = toMs)
+                is CreateDestinationUiState.Processing -> currentState.copy(fromMs = fromMs, toMs = toMs)
+                else -> currentState
+            }
+        }
+    }
+
+    fun setTripStyle(tripStyle: List<String>) {
+        _uiState.update { currentState ->
+            when (currentState) {
+                is CreateDestinationUiState.Creating -> currentState.copy(tripStyle = tripStyle)
+                is CreateDestinationUiState.Processing -> currentState.copy(tripStyle = tripStyle)
+                else -> currentState
+            }
         }
     }
 }
