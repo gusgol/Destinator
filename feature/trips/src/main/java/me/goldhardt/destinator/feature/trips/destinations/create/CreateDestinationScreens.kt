@@ -61,12 +61,11 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
-import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL
 import me.goldhardt.destinator.feature.trips.R
+import me.goldhardt.destinator.feature.trips.navigateToDestinationDetail
 
 
 @Composable
@@ -232,10 +231,10 @@ fun GeneratingItinerary(
         CreateDestinationUiState.Failed -> {
             GenerateItineraryFailed(viewModel)
         }
-        CreateDestinationUiState.Generated -> {
-            navController.navigate(DESTINATION_DETAIL) {
-                popUpTo(navController.graph.findStartDestination().id)
-            }
+        is CreateDestinationUiState.Generated -> {
+            navController.navigateToDestinationDetail(
+                (uiState as CreateDestinationUiState.Generated).destinationId
+            )
         }
         is CreateDestinationUiState.Processing -> {
             ProcessingItineraryRequest()

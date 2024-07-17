@@ -33,7 +33,9 @@ sealed class CreateDestinationUiState {
         override val tripStyle: List<String>
     ) : CreateDestinationUiState(), ItineraryRequest
 
-    data object Generated : CreateDestinationUiState()
+    data class Generated(
+        val destinationId: Long
+    ) : CreateDestinationUiState()
 
     data object Failed : CreateDestinationUiState()
 }
@@ -63,9 +65,11 @@ class CreateDestinationViewModel @Inject constructor(
                 toMs = itineraryRequest.toMs,
                 tripStyleList = itineraryRequest.tripStyle
             )
-            if (result.isSuccess) {
-                _uiState.tryEmit(CreateDestinationUiState.Generated)
-            } else {
+            result.getOrNull()?.let {
+                _uiState.tryEmit(
+                    CreateDestinationUiState.Generated(it)
+                )
+            } ?: run {
                 _uiState.tryEmit(CreateDestinationUiState.Failed)
             }
         }

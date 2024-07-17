@@ -1,9 +1,13 @@
 package me.goldhardt.destinator.feature.trips
 
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.GENERATING_ITINERARY
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DATES
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DESTINATION
@@ -17,6 +21,7 @@ import me.goldhardt.destinator.feature.trips.destinations.list.TripsListScreen
 
 const val DESTINATIONS_ROUTE = "trips"
 const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
+const val DESTINATION_ID = "destinationId"
 const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
 
 /**
@@ -57,8 +62,17 @@ fun NavGraphBuilder.tripsScreens(
         }
     }
     composable(
-        route = DESTINATION_DETAIL
+        route = "$DESTINATION_DETAIL/{$DESTINATION_ID}",
+        arguments = listOf(
+            navArgument(DESTINATION_ID) { type = NavType.LongType }
+        )
     ) {
         DestinationDetail()
+    }
+}
+
+fun NavController.navigateToDestinationDetail(destinationId: Long) {
+    navigate("$DESTINATION_DETAIL/$destinationId") {
+        popUpTo(graph.findStartDestination().id)
     }
 }

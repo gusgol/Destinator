@@ -15,6 +15,14 @@ interface DestinationDao {
     @Query("SELECT * FROM destinations")
     fun getDestinationsWithItinerary(): Flow<List<DestinationWithItinerary>>
 
+    @Query(
+        value = """
+        SELECT * FROM destinations
+        WHERE id = :destinationId
+    """,
+    )
+    fun getDestination(destinationId: Long): Flow<DestinationWithItinerary?>
+
     @Insert
     suspend fun insertDestination(destination: DestinationEntity): Long
 }

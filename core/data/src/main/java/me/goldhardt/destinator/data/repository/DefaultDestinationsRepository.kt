@@ -1,11 +1,13 @@
 package me.goldhardt.destinator.data.repository
 
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.goldhardt.destinator.core.database.dao.DestinationDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.model.DestinationEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
+import me.goldhardt.destinator.data.model.destination.Destination
+import me.goldhardt.destinator.data.model.destination.toDestination
 import java.io.IOException
 import javax.inject.Inject
 
@@ -24,7 +26,7 @@ class DefaultDestinationsRepository @Inject constructor(
         fromMs: Long,
         toMs: Long,
         tripStyleList: List<String>
-    ): Result<Unit> {
+    ): Result<Long> {
         val itineraryResult = generateItineraryRepository.generateItinerary(city, fromMs, toMs, tripStyleList)
         itineraryResult.getOrNull()?.let { itinerary ->
             val destinationId =
@@ -54,7 +56,11 @@ class DefaultDestinationsRepository @Inject constructor(
                     )
                 }
             )
-            return Result.success(Unit)
+            return Result.success(destinationId)
         } ?: return Result.failure(itineraryResult.exceptionOrNull() ?: IOException("Failed to generate itinerary"))
     }
+
+    override fun getDestination(destinationId: Long): Flow<Destination?> =
+        destinationsDao.getDestination(destinationId)
+            .map { it?.toDestination() }
 }
