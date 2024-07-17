@@ -15,32 +15,32 @@ import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
 import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
 import me.goldhardt.destinator.feature.trips.destinations.list.TripsListScreen
 
-const val TRIPS_ROUTE = "trips"
-const val CREATE_TRIP_ROUTE = "$TRIPS_ROUTE/create"
-const val DESTINATION_DETAIL = "$TRIPS_ROUTE/detail"
+const val DESTINATIONS_ROUTE = "trips"
+const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
+const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
 
 /**
  * Nested navigation for create trip
  */
 object CreateTripScreens {
-    const val SELECT_DESTINATION = "$CREATE_TRIP_ROUTE/select_destination"
-    const val SELECT_DATES = "$CREATE_TRIP_ROUTE/select_dates"
-    const val SELECT_TRIP_STYLE = "$CREATE_TRIP_ROUTE/select_trip_style"
-    const val GENERATING_ITINERARY = "$CREATE_TRIP_ROUTE/generating_itinerary"
+    const val SELECT_DESTINATION = "$CREATE_DESTINATION/select_destination"
+    const val SELECT_DATES = "$CREATE_DESTINATION/select_dates"
+    const val SELECT_TRIP_STYLE = "$CREATE_DESTINATION/select_trip_style"
+    const val GENERATING_ITINERARY = "$CREATE_DESTINATION/generating_itinerary"
 }
 
 fun NavGraphBuilder.tripsScreens(
     navController: NavHostController
 ) {
     composable(
-        route = TRIPS_ROUTE
+        route = DESTINATIONS_ROUTE
     ) {
         TripsListScreen {
-            navController.navigate(CREATE_TRIP_ROUTE)
+            navController.navigate(CREATE_DESTINATION)
         }
     }
     navigation(
-        route = CREATE_TRIP_ROUTE,
+        route = CREATE_DESTINATION,
         startDestination = SELECT_DESTINATION
     ) {
         composable(route = SELECT_DESTINATION) {

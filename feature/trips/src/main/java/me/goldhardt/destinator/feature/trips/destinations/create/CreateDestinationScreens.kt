@@ -63,7 +63,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import me.goldhardt.destinator.feature.trips.CREATE_TRIP_ROUTE
+import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL
 import me.goldhardt.destinator.feature.trips.R
@@ -75,7 +75,7 @@ fun SelectDestination(
     navBackStackEntry: NavBackStackEntry
 ) {
     val parentEntry = remember(navBackStackEntry) {
-        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+        navController.getBackStackEntry(CREATE_DESTINATION)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
 
@@ -127,7 +127,7 @@ fun SelectDates(
     navBackStackEntry: NavBackStackEntry
 ) {
     val parentEntry = remember(navBackStackEntry) {
-        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+        navController.getBackStackEntry(CREATE_DESTINATION)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
 
@@ -168,7 +168,7 @@ fun SelectTripStyle(
     navBackStackEntry: NavBackStackEntry
 ) {
     val parentEntry = remember(navBackStackEntry) {
-        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+        navController.getBackStackEntry(CREATE_DESTINATION)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
 
@@ -220,7 +220,7 @@ fun GeneratingItinerary(
     navBackStackEntry: NavBackStackEntry
 ) {
     val parentEntry = remember(navBackStackEntry) {
-        navController.getBackStackEntry(CREATE_TRIP_ROUTE)
+        navController.getBackStackEntry(CREATE_DESTINATION)
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
