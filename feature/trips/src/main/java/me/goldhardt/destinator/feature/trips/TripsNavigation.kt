@@ -17,7 +17,7 @@ import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestinati
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
 import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
-import me.goldhardt.destinator.feature.trips.destinations.list.TripsListScreen
+import me.goldhardt.destinator.feature.trips.destinations.list.DestinationsRoute
 
 const val DESTINATIONS_ROUTE = "trips"
 const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
@@ -40,9 +40,14 @@ fun NavGraphBuilder.tripsScreens(
     composable(
         route = DESTINATIONS_ROUTE
     ) {
-        TripsListScreen {
-            navController.navigate(CREATE_DESTINATION)
-        }
+        DestinationsRoute(
+            onDestinationClick = { destinationId ->
+                navController.navigateToDestinationDetail(destinationId)
+            },
+            onCreateTripClick = {
+                navController.navigate(CREATE_DESTINATION)
+            }
+        )
     }
     navigation(
         route = CREATE_DESTINATION,

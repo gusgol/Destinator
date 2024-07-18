@@ -5,6 +5,7 @@ import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.data.model.itinerary.toItineraryItem
 
 data class Destination(
+    val id: Long,
     val city: String,
     val country: String,
     val from: Long,
@@ -17,6 +18,7 @@ data class Destination(
 
 fun DestinationWithItinerary.toDestination(): Destination =
     Destination(
+        id = destination.id,
         city = destination.city,
         country = destination.country,
         from = destination.from,

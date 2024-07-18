@@ -63,4 +63,10 @@ class DefaultDestinationsRepository @Inject constructor(
     override fun getDestination(destinationId: Long): Flow<Destination?> =
         destinationsDao.getDestination(destinationId)
             .map { it?.toDestination() }
+
+    override fun getDestinations(): Flow<List<Destination>> =
+        destinationsDao.getDestinationsWithItinerary()
+            .map { list ->
+                list.map { it.toDestination() }
+            }
 }

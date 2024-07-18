@@ -13,4 +13,6 @@ interface DestinationsRepository {
     ): Result<Long>
 
     fun getDestination(destinationId: Long): Flow<Destination?>
+
+    fun getDestinations(): Flow<List<Destination>>
 }
