@@ -41,7 +41,20 @@ fun DestinationDetail(
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     Column {
-        SecondaryScrollableTabRow(selectedTabIndex = selectedTab) {
+        SecondaryScrollableTabRow(
+            selectedTabIndex = selectedTab,
+            divider = {
+            },
+            indicator = { tabPositions ->
+//                Box(
+//                    Modifier
+//                        .tabIndicatorOffset(tabPositions[selectedTab])
+//                        .padding(5.dp)
+//                        .fillMaxSize()
+//                        .border(BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface), RoundedCornerShape(5.dp))
+//                )
+            }
+        ) {
             uiState.calendar.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,

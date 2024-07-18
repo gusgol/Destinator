@@ -13,3 +13,12 @@ fun Long.toUTC(): String {
     formatter.timeZone = TimeZone.getTimeZone(DATE_MANIPULATION_TZ)
     return formatter.format(Date(this))
 }
+
+/**
+ * TODO - fix this to consider locale
+ */
+fun Long.toDayMonth(): String {
+    val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
+    formatter.timeZone = TimeZone.getTimeZone(DATE_MANIPULATION_TZ)
+    return formatter.format(Date(this))
+}

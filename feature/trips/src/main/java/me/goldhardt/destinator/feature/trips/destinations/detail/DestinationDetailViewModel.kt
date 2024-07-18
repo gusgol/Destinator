@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import me.goldhardt.destinator.data.extensions.toUTC
+import me.goldhardt.destinator.data.extensions.toDayMonth
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.repository.DestinationsRepository
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
@@ -50,6 +50,6 @@ class DestinationDetailViewModel @Inject constructor(
             )
 
     private fun getCalendarDays(destination: Destination): Set<String> {
-        return destination.itinerary.map { it.date.toUTC() }.toSet()
+        return destination.itinerary.map { it.date.toDayMonth() }.toSet()
     }
 }
