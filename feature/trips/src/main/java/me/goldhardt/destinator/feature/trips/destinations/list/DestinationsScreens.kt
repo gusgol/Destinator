@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import me.goldhardt.destinator.data.extensions.toUTC
 import me.goldhardt.destinator.data.model.destination.Destination
 
 @Composable
@@ -128,7 +127,7 @@ fun DestinationListItem(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "$${destination.from.toUTC()} - ${destination.to.toUTC()}",
+                text = "$${destination.from} - ${destination.to}",
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )

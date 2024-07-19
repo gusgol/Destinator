@@ -1,24 +1,20 @@
 package me.goldhardt.destinator.data.extensions
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 const val DATE_MANIPULATION_FORMAT = "dd/MM/yyyy"
 const val DATE_MANIPULATION_TZ = "UTC"
 
-fun Long.toUTC(): String {
-    val formatter = SimpleDateFormat(DATE_MANIPULATION_FORMAT, Locale.getDefault())
-    formatter.timeZone = TimeZone.getTimeZone(DATE_MANIPULATION_TZ)
-    return formatter.format(Date(this))
-}
-
 /**
- * TODO - fix this to consider locale
+ * Convert a Long to a ISO8601 date string
+ * Example: YYYY-MM-DD
  */
-fun Long.toDayMonth(): String {
-    val formatter = SimpleDateFormat("dd/MM", Locale.getDefault())
-    formatter.timeZone = TimeZone.getTimeZone(DATE_MANIPULATION_TZ)
-    return formatter.format(Date(this))
+fun Long.toISO8601(
+    zoneOffset: ZoneOffset = ZoneOffset.UTC
+): String {
+    val instant = Instant.ofEpochMilli(this)
+    val formatter = DateTimeFormatter.ISO_LOCAL_DATE.withZone(zoneOffset)
+    return formatter.format(instant)
 }

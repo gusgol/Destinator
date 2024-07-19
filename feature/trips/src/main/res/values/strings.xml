@@ -11,6 +11,7 @@
     <string name="cd_select_destination">Select destination button</string>
     <string name="title_trip_destination">Where are we going?</string>
     <string name="title_trip_dates">When are we going?</string>
+    <string name="title_trip_day">Day %1$s</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>
@@ -26,4 +27,5 @@
     <string name="title_generating_itinerary">Generating\nitinerary</string>
     <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>
     <string name="action_try_again">Try again!</string>
+
 </resources>

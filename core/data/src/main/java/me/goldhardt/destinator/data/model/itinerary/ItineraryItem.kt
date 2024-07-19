@@ -4,13 +4,14 @@ import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 
 class ItineraryItem(
     val order: Int,
-    val date: Long,
+    val date: String,
     val name: String,
     val description: String,
     val longitude: Double,
     val latitude: Double,
     val visitTimeMin: Int,
-    val thumbnail: String
+    val thumbnail: String,
+    val tripDay: Int
 )
 
 fun ItineraryItemEntity.toItineraryItem(): ItineraryItem =
@@ -22,5 +23,6 @@ fun ItineraryItemEntity.toItineraryItem(): ItineraryItem =
         longitude = longitude,
         latitude = latitude,
         visitTimeMin = visitTimeMin,
-        thumbnail = thumbnail
+        thumbnail = thumbnail,
+        tripDay = tripDay
     )

@@ -4,10 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AICreatedItineraryItem(
-    val date: Long,
+    val date: String,
     val name: String,
     val description: String,
     val longitude: Double,
     val latitude: Double,
-    val visitTimeMin: Int
+    val visitTimeMin: Int,
+    val tripDay: Int
 )

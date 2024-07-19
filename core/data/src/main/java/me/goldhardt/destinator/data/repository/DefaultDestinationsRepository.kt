@@ -27,22 +27,24 @@ class DefaultDestinationsRepository @Inject constructor(
         toMs: Long,
         tripStyleList: List<String>
     ): Result<Long> {
-        val itineraryResult = generateItineraryRepository.generateItinerary(city, fromMs, toMs, tripStyleList)
-        itineraryResult.getOrNull()?.let { itinerary ->
+        val result = generateItineraryRepository.generateItinerary(city, fromMs, toMs, tripStyleList)
+        result.getOrNull()?.let { destinationItinerary ->
+            val from = destinationItinerary.itinerary.minOf { it.date }
+            val to = destinationItinerary.itinerary.maxOf { it.date }
             val destinationId =
                 destinationsDao.insertDestination(
                     DestinationEntity(
-                        city = itinerary.city,
-                        country = itinerary.country,
-                        from = fromMs,
-                        to = toMs,
-                        longitude = itinerary.longitude,
-                        latitude = itinerary.latitude,
+                        city = destinationItinerary.city,
+                        country = destinationItinerary.country,
+                        from = from,
+                        to = to,
+                        longitude = destinationItinerary.longitude,
+                        latitude = destinationItinerary.latitude,
                         thumbnail = ""
                     )
                 )
             itineraryDao.insertItinerary(
-                itinerary.itinerary.mapIndexed { index, item ->
+                destinationItinerary.itinerary.mapIndexed { index, item ->
                     ItineraryItemEntity(
                         destinationId = destinationId,
                         order = index,
@@ -52,12 +54,13 @@ class DefaultDestinationsRepository @Inject constructor(
                         latitude = item.latitude,
                         longitude = item.longitude,
                         visitTimeMin = item.visitTimeMin,
+                        tripDay = item.tripDay,
                         thumbnail = ""
                     )
                 }
             )
             return Result.success(destinationId)
-        } ?: return Result.failure(itineraryResult.exceptionOrNull() ?: IOException("Failed to generate itinerary"))
+        } ?: return Result.failure(result.exceptionOrNull() ?: IOException("Failed to generate itinerary"))
     }
 
     override fun getDestination(destinationId: Long): Flow<Destination?> =

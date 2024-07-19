@@ -18,11 +18,12 @@ data class ItineraryItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "destination_id") val destinationId: Long,
     @ColumnInfo(name = "order") val order: Int,
-    @ColumnInfo(name = "date") val date: Long,
+    @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String,
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "latitude") val latitude: Double,
     @ColumnInfo(name = "visit_time_min") val visitTimeMin: Int,
-    @ColumnInfo(name = "thumbnail") val thumbnail: String
+    @ColumnInfo(name = "thumbnail") val thumbnail: String,
+    @ColumnInfo(name = "trip_day") val tripDay: Int
 )

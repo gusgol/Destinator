@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import me.goldhardt.destinator.data.extensions.toDayMonth
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.repository.DestinationsRepository
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
@@ -18,7 +17,7 @@ sealed interface DestinationDetailUiState {
     data object Loading : DestinationDetailUiState
     data class Success(
         val destination: Destination,
-        val calendar: List<String>
+        val calendar: List<Int>
     ) : DestinationDetailUiState
     data object Failed : DestinationDetailUiState
 }
@@ -49,11 +48,11 @@ class DestinationDetailViewModel @Inject constructor(
                 initialValue = DestinationDetailUiState.Loading,
             )
 
-    private fun getCalendarDays(destination: Destination): List<String> {
+    private fun getCalendarDays(destination: Destination): List<Int> {
         return destination
             .itinerary
             .sortedBy { it.date }
-            .map { it.date.toDayMonth() }
+            .map { it.tripDay }
             .distinct()
     }
 }
