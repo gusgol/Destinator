@@ -18,7 +18,7 @@ sealed interface DestinationDetailUiState {
     data object Loading : DestinationDetailUiState
     data class Success(
         val destination: Destination,
-        val calendar: Set<String>
+        val calendar: List<String>
     ) : DestinationDetailUiState
     data object Failed : DestinationDetailUiState
 }
@@ -49,7 +49,11 @@ class DestinationDetailViewModel @Inject constructor(
                 initialValue = DestinationDetailUiState.Loading,
             )
 
-    private fun getCalendarDays(destination: Destination): Set<String> {
-        return destination.itinerary.map { it.date.toDayMonth() }.toSet()
+    private fun getCalendarDays(destination: Destination): List<String> {
+        return destination
+            .itinerary
+            .sortedBy { it.date }
+            .map { it.date.toDayMonth() }
+            .distinct()
     }
 }
