@@ -13,6 +13,11 @@
         android:theme="@style/Theme.Destinator"
         android:name=".DestinatorApplication"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/maps_key" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

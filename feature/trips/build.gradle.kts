@@ -13,6 +13,8 @@ android {
     defaultConfig {
         minSdk = 28
 
+        resValue("string", "maps_key", "\"${project.findProperty("MAPS_API_KEY")}\"")
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -65,6 +67,9 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     ksp(libs.hilt.compiler)
     kspTest(libs.hilt.compiler)
+
+    // Google Maps
+    implementation(libs.google.maps)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
