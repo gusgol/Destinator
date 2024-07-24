@@ -21,6 +21,8 @@ ksp = "2.0.0-1.0.21"
 hiltNavigationCompose = "1.2.0"
 room = "2.6.1"
 googleMaps = "6.1.0"
+googlePlaces = "3.5.0"
+coil = "2.7.0"
 
 
 [libraries]
@@ -54,7 +56,10 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps"}
+google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps" }
+google-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "googlePlaces" }
+coil = { group = "io.coil-kt", name = "coil", version = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

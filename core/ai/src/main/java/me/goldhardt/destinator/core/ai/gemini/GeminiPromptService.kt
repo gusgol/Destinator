@@ -30,12 +30,14 @@ class GeminiPromptService : PromptService {
     )
 
     override suspend fun process(prompt: Prompt): Result<String> {
-        model.generateContent(
-            content {
-                prompt.texts.forEach { text(it) }
+        runCatching {
+            model.generateContent(
+                content {
+                    prompt.texts.forEach { text(it) }
+                }
+            ).text?.let {
+                return Result.success(it)
             }
-        ).text?.let {
-            return Result.success(it)
         }
         return Result.failure(
             PromptException("Gemini failed to generate response")

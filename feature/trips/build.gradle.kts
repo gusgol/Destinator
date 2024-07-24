@@ -71,6 +71,11 @@ dependencies {
     // Google Maps
     implementation(libs.google.maps)
 
+    // Coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+
+    debugImplementation(libs.androidx.ui.tooling)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

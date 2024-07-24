@@ -1,20 +1,25 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.hilt)
     id("com.google.devtools.ksp")
 }
 
 android {
-    namespace = "me.goldhardt.destinator.data"
+    namespace = "me.goldhardt.destinator.core.places"
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 28
+        minSdk = 27
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "PLACES_API_KEY", "\"${project.findProperty("MAPS_API_KEY")}\"")
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -36,17 +41,14 @@ android {
 }
 
 dependencies {
-    // Modules
-    implementation(projects.core.ai)
-    implementation(projects.core.database)
-    implementation(projects.core.places)
+
+    implementation(libs.google.places)
 
     // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     kspTest(libs.hilt.compiler)
 
-    implementation(libs.kotlinx.serialization)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)

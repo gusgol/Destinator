@@ -1,11 +1,13 @@
 package me.goldhardt.destinator.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.goldhardt.destinator.core.database.dao.DestinationDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.model.DestinationEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
+import me.goldhardt.destinator.core.places.PlacesDataSource
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.model.destination.toDestination
 import java.io.IOException
@@ -18,7 +20,8 @@ import javax.inject.Inject
 class DefaultDestinationsRepository @Inject constructor(
     private val destinationsDao: DestinationDao,
     private val itineraryDao: ItineraryDao,
-    private val generateItineraryRepository: GenerateItineraryRepository
+    private val generateItineraryRepository: GenerateItineraryRepository,
+    private val placesDataSource: PlacesDataSource,
 ) : DestinationsRepository {
 
     override suspend fun createDestination(
@@ -45,17 +48,20 @@ class DefaultDestinationsRepository @Inject constructor(
                 )
             itineraryDao.insertItinerary(
                 destinationItinerary.itinerary.mapIndexed { index, item ->
+                    val place = placesDataSource.getPlace(item.name, item.latitude, item.longitude)
                     ItineraryItemEntity(
                         destinationId = destinationId,
                         order = index,
                         date = item.date,
                         name = item.name,
                         description = item.description,
-                        latitude = item.latitude,
-                        longitude = item.longitude,
+                        latitude = place?.latitude ?: item.latitude,
+                        longitude = place?.longitude ?: item.longitude,
                         visitTimeMin = item.visitTimeMin,
                         tripDay = item.tripDay,
-                        thumbnail = ""
+                        thumbnail = "",
+                        iconUrl = place?.iconUrl,
+                        metadataSourceId = place?.sourceId
                     )
                 }
             )

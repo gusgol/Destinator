@@ -11,7 +11,9 @@ class ItineraryItem(
     val latitude: Double,
     val visitTimeMin: Int,
     val thumbnail: String,
-    val tripDay: Int
+    val tripDay: Int,
+    val iconUrl: String?,
+    val metadataSourceId: String?
 )
 
 fun ItineraryItemEntity.toItineraryItem(): ItineraryItem =
@@ -24,5 +26,7 @@ fun ItineraryItemEntity.toItineraryItem(): ItineraryItem =
         latitude = latitude,
         visitTimeMin = visitTimeMin,
         thumbnail = thumbnail,
-        tripDay = tripDay
+        tripDay = tripDay,
+        iconUrl = iconUrl,
+        metadataSourceId = metadataSourceId
     )

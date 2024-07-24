@@ -1,18 +1,23 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,7 +28,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,8 +42,12 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
+import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.R
+import java.time.Duration
+import java.time.LocalTime
 
 @Composable
 fun DestinationDetail(
@@ -47,9 +58,11 @@ fun DestinationDetail(
         DestinationDetailUiState.Failed -> {
             Text(text = "Failed...")
         }
+
         DestinationDetailUiState.Loading -> {
             Text(text = "Loading...")
         }
+
         is DestinationDetailUiState.Success -> {
             DestinationDetail(uiState = uiState as DestinationDetailUiState.Success)
         }
@@ -113,7 +126,7 @@ fun DestinationMap(
     items: List<ItineraryItem>,
     modifier: Modifier = Modifier,
 
-) {
+    ) {
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(destinationCoordinates, 15f)
     }
@@ -154,12 +167,13 @@ fun DayItinerary(
                 .align(Alignment.CenterHorizontally)
         )
         LazyColumn(
-            contentPadding = PaddingValues(horizontal = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f)
         ) {
-            items(items) { item ->
-                ItineraryItem(item = item)
+            itemsIndexed(items) { index, item ->
+                ItineraryItem(
+                    isFirst = index == 0,
+                    item = item
+                )
             }
         }
     }
@@ -167,20 +181,108 @@ fun DayItinerary(
 
 @Composable
 fun ItineraryItem(
+    isFirst: Boolean,
     item: ItineraryItem
 ) {
-    Column(
-        modifier = Modifier.padding(16.dp)
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .height(IntrinsicSize.Min)
     ) {
-        Text(text = item.name,
-            style = MaterialTheme.typography.headlineSmall,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        Text(text = item.description,
-            style = MaterialTheme.typography.bodyMedium,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            if (!isFirst) {
+                VerticalDivider(
+                    modifier = Modifier.height(8.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                )
+            } else {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+            ElevatedIcon(
+                iconUrl = item.iconUrl.orEmpty(),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .size(20.dp),
+            )
+            VerticalDivider(
+                modifier = Modifier.fillMaxHeight(),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+            )
+        }
+
+        Column(
+            modifier =
+                Modifier.padding(
+                    horizontal = 16.dp,
+                    vertical = 8.dp
+                )
+        ) {
+            Text(
+                text = stringResource(R.string.title_visit_time, item.getVisitTime()),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f),
+                maxLines = 1,
+                modifier = Modifier.padding(bottom = 2.dp)
+            )
+            Text(
+                text = item.name,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                text = item.description,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            HorizontalDivider(
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+            )
+        }
+    }
+}
+
+private fun ItineraryItem.getVisitTime(): String {
+    val duration = LocalTime.MIN.plus(
+        Duration.ofMinutes(visitTimeMin.toLong())
+    )
+    var displayDuration = ""
+    if (duration.hour > 0) {
+        displayDuration += "${duration.hour}h "
+    }
+    if (duration.minute > 0) {
+        displayDuration += "${duration.minute}m"
+    }
+    return displayDuration
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ItineraryItemPreview() {
+    DestinatorTheme {
+        ItineraryItem(
+            isFirst = true,
+            item = ItineraryItem(
+                name = "Sample Destination",
+                description = "This is a sample description for a destination.",
+                iconUrl = "https://example.com/icon.png",
+                latitude = 0.0,
+                longitude = 0.0,
+                date = "2023-04-01",
+                metadataSourceId = "123",
+                order = 1,
+                thumbnail = "https://example.com/thumbnail.png",
+                tripDay = 1,
+                visitTimeMin = 60
+            )
         )
     }
 }
