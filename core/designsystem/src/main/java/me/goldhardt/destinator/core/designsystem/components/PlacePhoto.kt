@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import me.goldhardt.destinator.core.designsystem.BuildConfig
 
 @Composable
 fun PlacePhotos(
@@ -51,9 +52,9 @@ fun PlacePhoto(
         transformedUrl += "&maxWidthPx=$maxWidthPx"
     }
     if (maxHeightPx != null) {
-        transformedUrl += "&maxHeightPx=$maxHeightPx"
+        transformedUrl += "&maxHeight`Px=$maxHeightPx"
     }
-    transformedUrl += "&key=AIzaSyDeOWPFuQ6yLrofwvtyzybeRGVmuBNyfTs"
+    transformedUrl += "&key=${BuildConfig.PLACES_API_KEY}"
     AsyncImage(
         model = transformedUrl,
         contentDescription = null, // TODO fix accessibility
