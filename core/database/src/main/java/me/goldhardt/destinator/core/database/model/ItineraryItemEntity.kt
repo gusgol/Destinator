@@ -24,7 +24,6 @@ data class ItineraryItemEntity(
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "latitude") val latitude: Double,
     @ColumnInfo(name = "visit_time_min") val visitTimeMin: Int,
-    @ColumnInfo(name = "thumbnail") val thumbnail: String,
     @ColumnInfo(name = "trip_day") val tripDay: Int,
     @ColumnInfo(name = "icon_url") val iconUrl: String?,
     @ColumnInfo(name = "metadata_source_id") val metadataSourceId: String?

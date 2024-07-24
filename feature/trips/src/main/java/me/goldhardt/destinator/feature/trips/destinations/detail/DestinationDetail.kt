@@ -43,6 +43,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
+import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.R
@@ -217,8 +218,10 @@ fun ItineraryItem(
         Column(
             modifier =
                 Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 8.dp
+                    start = 16.dp,
+                    end = 0.dp,
+                    top = 8.dp,
+                    bottom = 8.dp
                 )
         ) {
             Text(
@@ -241,7 +244,16 @@ fun ItineraryItem(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(32.dp))
+            if (item.photos.isNotEmpty()) {
+                PlacePhotos(
+                    imageUrls = item.photos,
+                    maxWidthPx = 200,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
@@ -279,7 +291,6 @@ fun ItineraryItemPreview() {
                 date = "2023-04-01",
                 metadataSourceId = "123",
                 order = 1,
-                thumbnail = "https://example.com/thumbnail.png",
                 tripDay = 1,
                 visitTimeMin = 60
             )

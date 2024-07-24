@@ -9,6 +9,11 @@ interface ItineraryDao {
 
     @Insert
     suspend fun insertItinerary(
+        itineraryItem: ItineraryItemEntity
+    ): Long
+
+    @Insert
+    suspend fun insertItinerary(
         itineraryItems: List<ItineraryItemEntity>
-    )
+    ): List<Long>
 }

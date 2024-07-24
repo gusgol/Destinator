@@ -6,8 +6,9 @@ import androidx.room.Relation
 data class DestinationWithItinerary(
     @Embedded val destination: DestinationEntity,
     @Relation(
+        entity = ItineraryItemEntity::class,
         parentColumn = "id",
         entityColumn = "destination_id"
     )
-    val itinerary: List<ItineraryItemEntity>
+    val itinerary: List<ItineraryItemWithPhotos>
 )

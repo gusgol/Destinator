@@ -5,4 +5,5 @@ data class PlaceMetadata(
     val iconUrl: String?,
     val latitude: Double?,
     val longitude: Double?,
+    val photosUrls: List<String>?,
 )

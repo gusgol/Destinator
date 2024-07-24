@@ -15,4 +15,7 @@ internal object DaosModule {
 
     @Provides
     fun providesItineraryDao(database: DestinatorDatabase) = database.itineraryDao()
+
+    @Provides
+    fun providesPhotoDao(database: DestinatorDatabase) = database.photoDao()
 }

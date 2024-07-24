@@ -1,6 +1,6 @@
 package me.goldhardt.destinator.data.model.itinerary
 
-import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
+import me.goldhardt.destinator.core.database.model.ItineraryItemWithPhotos
 
 class ItineraryItem(
     val order: Int,
@@ -10,23 +10,23 @@ class ItineraryItem(
     val longitude: Double,
     val latitude: Double,
     val visitTimeMin: Int,
-    val thumbnail: String,
     val tripDay: Int,
     val iconUrl: String?,
-    val metadataSourceId: String?
+    val metadataSourceId: String?,
+    val photos: List<String> = emptyList()
 )
 
-fun ItineraryItemEntity.toItineraryItem(): ItineraryItem =
+fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
     ItineraryItem(
-        order = order,
-        date = date,
-        name = name,
-        description = description,
-        longitude = longitude,
-        latitude = latitude,
-        visitTimeMin = visitTimeMin,
-        thumbnail = thumbnail,
-        tripDay = tripDay,
-        iconUrl = iconUrl,
-        metadataSourceId = metadataSourceId
+        order = itineraryItem.order,
+        date = itineraryItem.date,
+        name = itineraryItem. name,
+        description = itineraryItem.description,
+        longitude = itineraryItem.longitude,
+        latitude = itineraryItem.latitude,
+        visitTimeMin = itineraryItem.visitTimeMin,
+        tripDay = itineraryItem.tripDay,
+        iconUrl = itineraryItem.iconUrl,
+        metadataSourceId = itineraryItem.metadataSourceId,
+        photos = photos.map { it.url }
     )
