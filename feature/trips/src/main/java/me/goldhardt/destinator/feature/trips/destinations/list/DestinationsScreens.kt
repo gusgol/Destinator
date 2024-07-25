@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
+import me.goldhardt.destinator.core.designsystem.components.StaticMapImage
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
 import me.goldhardt.destinator.data.extensions.formatDates
 import me.goldhardt.destinator.data.model.destination.Destination
@@ -159,7 +161,7 @@ fun DestinationListItem(
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .weight(1.2f),
+                        .weight(1f),
                 ) {
                     Text(
                         text = "${destination.city}, ${destination.country}",
@@ -213,12 +215,21 @@ fun DestinationListItem(
                 }
                 Box(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 16.dp)
-                        .background(color = MaterialTheme.colorScheme.primary)
+                        .padding(16.dp)
                         .height(100.dp)
+                        .weight(1f)
                 ) {
-
+                    StaticMapImage(
+                        latitude = destination.latitude,
+                        longitude = destination.longitude,
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .fillMaxSize(),
+                        contentDescription = stringResource(
+                            R.string.cd_map_of,
+                            destination.city,
+                        )
+                    )
                 }
             }
 

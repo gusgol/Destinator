@@ -19,6 +19,7 @@
     <string name="title_visit_time">Visit time・ %1$s</string>
     <string name="title_s_places">%1$s places</string>
     <string name="title_total">Total</string>
+    <string name="cd_map_of">Map of %1$s</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>
