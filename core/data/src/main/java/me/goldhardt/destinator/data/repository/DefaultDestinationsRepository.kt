@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.goldhardt.destinator.core.database.dao.DestinationDao
@@ -36,6 +37,12 @@ class DefaultDestinationsRepository @Inject constructor(
         result.getOrNull()?.let { destinationItinerary ->
             val from = destinationItinerary.itinerary.minOf { it.date }
             val to = destinationItinerary.itinerary.maxOf { it.date }
+            val destinationPlace = placesDataSource.getPlace(
+                query = city,
+                latitude = destinationItinerary.latitude,
+                longitude = destinationItinerary.longitude
+            )
+            Log.e("DefaultDestinationsRepository", "createDestination: $destinationPlace")
             val destinationId =
                 destinationsDao.insertDestination(
                     DestinationEntity(
@@ -45,7 +52,7 @@ class DefaultDestinationsRepository @Inject constructor(
                         to = to,
                         longitude = destinationItinerary.longitude,
                         latitude = destinationItinerary.latitude,
-                        thumbnail = ""
+                        thumbnail = destinationPlace?.photosUrls?.random().orEmpty()
                     )
                 )
 

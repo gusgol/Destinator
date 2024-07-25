@@ -44,6 +44,8 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
 import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
+import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
+import me.goldhardt.destinator.core.designsystem.components.SubtleVerticalDivider
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.R
@@ -194,10 +196,8 @@ fun ItineraryItem(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (!isFirst) {
-                VerticalDivider(
-                    modifier = Modifier.height(8.dp),
-                    thickness = 1.dp,
-                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                SubtleVerticalDivider(
+                    modifier = Modifier.height(8.dp)
                 )
             } else {
                 Spacer(modifier = Modifier.height(8.dp))
@@ -208,10 +208,8 @@ fun ItineraryItem(
                     .padding(8.dp)
                     .size(20.dp),
             )
-            VerticalDivider(
-                modifier = Modifier.fillMaxHeight(),
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+            SubtleVerticalDivider(
+                modifier = Modifier.fillMaxHeight()
             )
         }
 
@@ -254,10 +252,7 @@ fun ItineraryItem(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
-            )
+            SubtleHorizontalDivider()
         }
     }
 }

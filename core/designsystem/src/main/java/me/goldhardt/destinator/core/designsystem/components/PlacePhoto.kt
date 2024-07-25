@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import me.goldhardt.destinator.core.designsystem.BuildConfig
@@ -23,6 +24,7 @@ fun PlacePhotos(
     modifier: Modifier = Modifier,
     maxWidthPx: Int? = 400,
     maxHeightPx: Int? = null,
+    photosSize: Dp = 120.dp
 ) {
     Box(
         modifier = modifier.horizontalScroll(rememberScrollState()),
@@ -34,7 +36,11 @@ fun PlacePhotos(
                 PlacePhoto(
                     imageUrl = it,
                     maxWidthPx = maxWidthPx,
-                    maxHeightPx = maxHeightPx
+                    maxHeightPx = maxHeightPx,
+                    contentDescription = null, // TODO fix accessibility
+                    modifier = Modifier
+                        .size(photosSize)
+                        .clip(RoundedCornerShape(8.dp))
                 )
             }
         }
@@ -44,8 +50,10 @@ fun PlacePhotos(
 @Composable
 fun PlacePhoto(
     imageUrl: String,
+    modifier: Modifier = Modifier,
     maxWidthPx: Int? = 400,
-    maxHeightPx: Int? = null
+    maxHeightPx: Int? = null,
+    contentDescription: String? = null
 ) {
     var transformedUrl = "$imageUrl?"
     if (maxWidthPx != null) {
@@ -57,11 +65,9 @@ fun PlacePhoto(
     transformedUrl += "&key=${BuildConfig.PLACES_API_KEY}"
     AsyncImage(
         model = transformedUrl,
-        contentDescription = null, // TODO fix accessibility
+        contentDescription = contentDescription,
         contentScale = ContentScale.Crop,
         placeholder = ColorPainter(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
-        modifier = Modifier
-            .size(120.dp)
-            .clip(RoundedCornerShape(8.dp))
+        modifier = modifier
     )
 }
