@@ -12,12 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,7 +76,7 @@ fun DestinationDetail(
     uiState: DestinationDetailUiState.Success
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    var selectedItems = uiState.destination.itinerary.filter {
+    val selectedItems = uiState.destination.itinerary.filter {
         it.tripDay == uiState.calendar[selectedTab]
     }
     Column {
@@ -87,7 +85,7 @@ fun DestinationDetail(
             selectedItems,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(LocalConfiguration.current.screenHeightDp.div(3).dp)
+                .height(LocalConfiguration.current.screenHeightDp.div(2.4).dp)
         )
         SecondaryScrollableTabRow(
             selectedTabIndex = selectedTab,

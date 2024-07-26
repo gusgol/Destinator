@@ -59,6 +59,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import me.goldhardt.destinator.core.designsystem.components.NextStepButton
+import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.R
@@ -82,6 +83,7 @@ fun SelectDestination(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .paddingTopBarAndStatusBar()
             .imePadding()
     ) {
         Spacer(modifier = Modifier.height(120.dp))
@@ -134,7 +136,9 @@ fun SelectDates(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .paddingTopBarAndStatusBar()
     ) {
         DateRangePicker(
             state = state,
@@ -178,7 +182,9 @@ fun SelectTripStyle(
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
+            .paddingTopBarAndStatusBar()
     ) {
         Spacer(modifier = Modifier.height(120.dp))
         CreateTripTitle(resourceId = R.string.title_select_trip_style)
@@ -230,7 +236,7 @@ fun GeneratingItinerary(
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (uiState) {
+    when (val state = uiState) {
         is CreateDestinationUiState.Creating -> {
             viewModel.generate()
         }
@@ -238,9 +244,7 @@ fun GeneratingItinerary(
             GenerateItineraryFailed(viewModel)
         }
         is CreateDestinationUiState.Generated -> {
-            navController.navigateToDestinationDetail(
-                (uiState as CreateDestinationUiState.Generated).destinationId
-            )
+            navController.navigateToDestinationDetail(state.destinationId , state.city )
         }
         is CreateDestinationUiState.Processing -> {
             ProcessingItineraryRequest()
@@ -251,7 +255,9 @@ fun GeneratingItinerary(
 @Composable
 private fun GenerateItineraryFailed(viewModel: CreateDestinationViewModel) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .paddingTopBarAndStatusBar(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

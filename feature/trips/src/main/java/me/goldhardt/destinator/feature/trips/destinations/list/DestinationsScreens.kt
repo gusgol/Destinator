@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
 import me.goldhardt.destinator.core.designsystem.components.StaticMapImage
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
+import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.data.extensions.formatDates
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.feature.trips.R
@@ -50,12 +51,14 @@ import me.goldhardt.destinator.feature.trips.R
 @Composable
 fun DestinationsRoute(
     destinationsViewModel: DestinationsViewModel = hiltViewModel(),
-    onDestinationClick: (Long) -> Unit,
+    onDestinationClick: (Destination) -> Unit,
     onCreateTripClick: () -> Unit,
 ) {
     val uiState by destinationsViewModel.uiState.collectAsStateWithLifecycle()
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .paddingTopBarAndStatusBar(),
     ) {
         DestinationsList(uiState, onDestinationClick)
         ExtendedFloatingActionButton(
@@ -79,7 +82,7 @@ fun DestinationsRoute(
 @Composable
 fun DestinationsList(
     uiState: DestinationsUiState,
-    onClick: (Long) -> Unit
+    onClick: (Destination) -> Unit
 ) {
     when (uiState) {
         DestinationsUiState.Loading -> {
@@ -113,7 +116,7 @@ fun DestinationsList(
 @Composable
 fun DestinationsList(
     destinations: List<Destination>,
-    onClick: (Long) -> Unit
+    onClick: (Destination) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 8.dp),
@@ -128,14 +131,14 @@ fun DestinationsList(
 @Composable
 fun DestinationListItem(
     destination: Destination,
-    onClick: (Long) -> Unit
+    onClick: (Destination) -> Unit
 ) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant,
         ),
         modifier = Modifier.fillMaxWidth(),
-        onClick = { onClick(destination.id) }
+        onClick = { onClick(destination) }
     ) {
         Box(
             modifier = Modifier.fillMaxSize()

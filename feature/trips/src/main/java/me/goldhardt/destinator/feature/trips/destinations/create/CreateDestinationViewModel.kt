@@ -34,7 +34,8 @@ sealed class CreateDestinationUiState {
     ) : CreateDestinationUiState(), ItineraryRequest
 
     data class Generated(
-        val destinationId: Long
+        val destinationId: Long,
+        val city: String
     ) : CreateDestinationUiState()
 
     data object Failed : CreateDestinationUiState()
@@ -67,7 +68,7 @@ class CreateDestinationViewModel @Inject constructor(
             )
             result.getOrNull()?.let {
                 _uiState.tryEmit(
-                    CreateDestinationUiState.Generated(it)
+                    CreateDestinationUiState.Generated(it, itineraryRequest.city)
                 )
             } ?: run {
                 _uiState.tryEmit(CreateDestinationUiState.Failed)

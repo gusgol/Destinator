@@ -11,15 +11,15 @@ import me.goldhardt.destinator.navigation.DestinatorNavHost
 @Composable
 fun DestinatorApp() {
     val navController = rememberNavController()
+    val appState = rememberDestinatorAppState(navController)
     Scaffold(
-        topBar = {
-            DestinatorTopBar(navController = navController)
-        },
         modifier = Modifier.fillMaxSize()
     ) { padding ->
         DestinatorNavHost(
             navController = navController,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier
+                .padding(padding)
         )
+        DestinatorTopBar(appState)
     }
 }
