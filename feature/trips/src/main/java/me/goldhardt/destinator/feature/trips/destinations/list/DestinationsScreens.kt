@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.feature.trips.destinations.list
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,8 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -93,12 +96,7 @@ fun DestinationsList(
         }
 
         DestinationsUiState.Empty -> {
-            Text(
-                text = "No destinations found",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            EmptyDestinations()
         }
 
         DestinationsUiState.Failed -> {
@@ -232,7 +230,43 @@ fun DestinationListItem(
                     )
                 }
             }
-
         }
+    }
+}
+
+@Composable
+fun EmptyDestinations() {
+    val heading = buildAnnotatedString {
+        append(stringResource(R.string.title_empty_heading_1))
+        append(" ")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+            append(stringResource(R.string.title_empty_heading_2))
+        }
+        append("!")
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .padding(32.dp)
+            .fillMaxSize()
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_globe_plane),
+            contentDescription = null,
+            modifier = Modifier.size(120.dp)
+        )
+        Text(
+            text = heading,
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = stringResource(R.string.title_empty_subheading),
+            style = MaterialTheme.typography.titleSmall,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp)
+        )
     }
 }
