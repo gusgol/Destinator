@@ -119,8 +119,9 @@ fun DestinationsList(
     onClick: (Destination) -> Unit
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         items(destinations) { destination ->
             DestinationListItem(destination, onClick)
@@ -134,13 +135,13 @@ fun DestinationListItem(
     onClick: (Destination) -> Unit
 ) {
     Card(
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        ),
         modifier = Modifier.fillMaxWidth(),
-        onClick = { onClick(destination) }
+        onClick = { onClick(destination) },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 16.dp
+        ),
     ) {
-        Box(
+        Column(
             modifier = Modifier.fillMaxSize()
         ) {
             PlacePhoto(
@@ -148,15 +149,12 @@ fun DestinationListItem(
                 maxWidthPx = 600,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(240.dp)
+                    .height(160.dp)
             )
             Row(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
-                    .align(Alignment.BottomEnd)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(color = MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.surface),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(
@@ -216,7 +214,7 @@ fun DestinationListItem(
                 }
                 Box(
                     modifier = Modifier
-                        .padding(16.dp)
+                        .padding(top = 16.dp, end = 16.dp, bottom = 16.dp, start = 8.dp)
                         .height(100.dp)
                         .weight(1f)
                 ) {
