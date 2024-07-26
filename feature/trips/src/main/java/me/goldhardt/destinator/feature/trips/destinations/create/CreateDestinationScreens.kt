@@ -22,15 +22,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -62,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import me.goldhardt.destinator.core.designsystem.components.NextStepButton
 import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.R
@@ -112,7 +109,10 @@ fun SelectDestination(
             )
         )
         Spacer(modifier = Modifier.weight(1f))
-        NextStepButton {
+        NextStepButton(
+            enabled = selectedCity.isNotBlank(),
+            modifier = Modifier.padding(48.dp)
+        ) {
             viewModel.setCity(selectedCity)
             navController.navigate(CreateTripScreens.SELECT_DATES)
         }
@@ -150,7 +150,10 @@ fun SelectDates(
                 .padding(16.dp)
                 .weight(1f)
         )
-        NextStepButton {
+        NextStepButton(
+            enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
+            modifier = Modifier.padding(48.dp)
+        ) {
             viewModel.setDates(
                 state.selectedStartDateMillis ?: 0,
                 state.selectedEndDateMillis ?: 0
@@ -200,7 +203,10 @@ fun SelectTripStyle(
                 )
             }
         }
-        NextStepButton {
+        NextStepButton(
+            enabled = selectedStyles.isNotEmpty(),
+            modifier = Modifier.padding(48.dp)
+        ) {
             viewModel.setTripStyle(
                 selectedStyles.map { it.name }
             )
@@ -398,22 +404,4 @@ enum class TripStyle(val displayName: Int) {
     CulturalExperiences(R.string.trip_style_cultural_experiences),
     PhotographySpots(R.string.trip_style_photography_spots),
     RomanticGetaways(R.string.trip_style_romantic_getaways)
-}
-
-/**
- * TODO Extract to DS
- */
-@Composable
-private fun NextStepButton(
-    onNextClick: () -> Unit
-) {
-    FloatingActionButton(
-        onClick = onNextClick,
-        Modifier.padding(48.dp)
-    ) {
-        Icon(
-            Icons.AutoMirrored.Filled.ArrowForward,
-            stringResource(R.string.cd_select_destination)
-        )
-    }
 }
