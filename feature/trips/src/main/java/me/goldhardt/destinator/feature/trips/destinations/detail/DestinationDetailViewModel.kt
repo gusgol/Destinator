@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.repository.DestinationsRepository
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
@@ -60,7 +61,7 @@ class DestinationDetailViewModel @Inject constructor(
             .map {
                 TripDay(
                     day = it.tripDay,
-                    date = it.date
+                    date = formatDate(it.date)
                 )
             }
             .distinct()

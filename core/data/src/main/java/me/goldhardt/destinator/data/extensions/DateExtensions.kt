@@ -46,3 +46,13 @@ fun formatDates(startDateString: String, endDateString: String): String {
 
     return "$formattedStart - $formattedEnd"
 }
+
+/**
+ * Formats a given ISO 8601 date string into a human-readable string.
+ * Example: 2024-10-21 -> 21 Oct
+ */
+fun formatDate(dateString: String): String {
+    val date = LocalDate.parse(dateString)
+    val formatter = DateTimeFormatter.ofPattern("d MMM")
+    return date.format(formatter)
+}

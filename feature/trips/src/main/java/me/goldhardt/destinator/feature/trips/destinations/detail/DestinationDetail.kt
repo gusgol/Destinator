@@ -174,14 +174,6 @@ fun DayItinerary(
     items: List<ItineraryItem>
 ) {
     Column {
-        Text(
-            text = items.map { it.date }.distinct().joinToString(),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)
-        )
         LazyColumn(
             modifier = Modifier.weight(1f)
         ) {

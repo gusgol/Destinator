@@ -160,7 +160,7 @@ fun DestinationListItem(
                 Column(
                     modifier = Modifier
                         .padding(16.dp)
-                        .weight(1f),
+                        .weight(1.2f),
                 ) {
                     Text(
                         text = "${destination.city}, ${destination.country}",
