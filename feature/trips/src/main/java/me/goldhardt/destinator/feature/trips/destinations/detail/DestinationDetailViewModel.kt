@@ -17,15 +17,20 @@ sealed interface DestinationDetailUiState {
     data object Loading : DestinationDetailUiState
     data class Success(
         val destination: Destination,
-        val calendar: List<Int>
+        val calendar: List<TripDay>
     ) : DestinationDetailUiState
     data object Failed : DestinationDetailUiState
 }
 
+data class TripDay(
+    val day: Int,
+    val date: String,
+)
+
 @HiltViewModel
 class DestinationDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val destinationsRepository: DestinationsRepository
+    destinationsRepository: DestinationsRepository
 ) : ViewModel() {
 
     private val destinationId: Long = checkNotNull(savedStateHandle[DESTINATION_ID])
@@ -48,11 +53,16 @@ class DestinationDetailViewModel @Inject constructor(
                 initialValue = DestinationDetailUiState.Loading,
             )
 
-    private fun getCalendarDays(destination: Destination): List<Int> {
+    private fun getCalendarDays(destination: Destination): List<TripDay> {
         return destination
             .itinerary
             .sortedBy { it.date }
-            .map { it.tripDay }
+            .map {
+                TripDay(
+                    day = it.tripDay,
+                    date = it.date
+                )
+            }
             .distinct()
     }
 }

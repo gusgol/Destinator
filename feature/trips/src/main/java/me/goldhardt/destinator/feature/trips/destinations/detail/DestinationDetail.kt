@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
@@ -77,7 +79,7 @@ fun DestinationDetail(
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val selectedItems = uiState.destination.itinerary.filter {
-        it.tripDay == uiState.calendar[selectedTab]
+        it.tripDay == uiState.calendar[selectedTab].day
     }
     Column {
         DestinationMap(
@@ -91,26 +93,39 @@ fun DestinationDetail(
             selectedTabIndex = selectedTab,
             divider = {
             },
-//            indicator = { tabPositions ->
-//                Box(
-//                    Modifier
-//                        .tabIndicatorOffset(tabPositions[selectedTab])
-//                        .padding(5.dp)
-//                        .fillMaxSize()
-//                        .border(BorderStroke(2.dp, MaterialTheme.colorScheme.onSurface), RoundedCornerShape(5.dp))
-//                )
-//            }
+            indicator = {
+            }
         ) {
             uiState.calendar.forEachIndexed { index, tripDay ->
+                val isSelected = selectedTab == index
+                val tabBackgroundColor = if (isSelected) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                }
                 Tab(
-                    selected = selectedTab == index,
+                    selected = isSelected,
                     onClick = { selectedTab = index },
+                    selectedContentColor = MaterialTheme.colorScheme.surface,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .padding(horizontal = 4.dp, vertical = 4.dp)
+                        .background(color = tabBackgroundColor, shape = RoundedCornerShape(4.dp))
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
                     text = {
-                        Text(
-                            text = stringResource(R.string.title_trip_day, tripDay),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
-                        )
+                        Column {
+                            Text(
+                                text = stringResource(R.string.title_trip_day, tripDay.day),
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text = tripDay.date,
+                                maxLines = 1,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
                     }
                 )
             }
