@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -111,7 +112,8 @@ fun DestinationDetail(
                     modifier = Modifier
                         .padding(horizontal = 4.dp, vertical = 4.dp)
                         .background(color = tabBackgroundColor, shape = RoundedCornerShape(4.dp))
-                        .padding(horizontal = 4.dp, vertical = 4.dp),
+                        .width(120.dp)
+                        .height(80.dp),
                     text = {
                         Column {
                             Text(
