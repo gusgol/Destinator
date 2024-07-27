@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -140,10 +139,11 @@ fun DestinationsList(
         pageSpacing = 16.dp,
         contentPadding = PaddingValues(horizontal = 32.dp),
     ) { page ->
+        val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
+            .absoluteValue
         DestinationListItem(
             destination = destinations[page],
-            pagerState = pagerState,
-            page = page,
+            pageOffset = pageOffset,
             onClick = onClick
         )
     }
@@ -163,15 +163,9 @@ fun DestinationsList(
 @Composable
 fun DestinationListItem(
     destination: Destination,
-    pagerState: PagerState,
-    page: Int,
+    pageOffset: Float,
     onClick: (Destination) -> Unit
 ) {
-    val pageOffset = (
-            (pagerState.currentPage - page) + pagerState
-                .currentPageOffsetFraction
-            ).absoluteValue
-
     Card(
         modifier = Modifier
             .fillMaxWidth()
