@@ -209,9 +209,11 @@ fun SelectTripStyle(
                 )
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
         NextStepButton(
             enabled = selectedStyles.isNotEmpty(),
-            modifier = Modifier.padding(48.dp)
+            modifier = Modifier
+                .padding(48.dp)
         ) {
             viewModel.setTripStyle(
                 selectedStyles.map { it.name }
@@ -319,6 +321,7 @@ fun ProcessingItineraryRequest() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .paddingTopBarAndStatusBar(),
     )  {
         Image(
             painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_plane),
