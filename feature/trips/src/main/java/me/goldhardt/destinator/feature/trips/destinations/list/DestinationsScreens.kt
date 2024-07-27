@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package me.goldhardt.destinator.feature.trips.destinations.list
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,8 +16,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
@@ -29,6 +33,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -38,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
@@ -47,6 +53,7 @@ import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.data.extensions.formatDates
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.feature.trips.R
+import kotlin.math.absoluteValue
 
 @Composable
 fun DestinationsRoute(
@@ -59,11 +66,15 @@ fun DestinationsRoute(
         modifier = Modifier
             .fillMaxSize()
             .paddingTopBarAndStatusBar(),
+        contentAlignment = Alignment.Center
     ) {
         DestinationsList(uiState, onDestinationClick)
         ExtendedFloatingActionButton(
             text = {
-                Text("Add Trip")
+                Text(
+                    text = "Create Itinerary",
+                    style = MaterialTheme.typography.titleMedium,
+                )
             },
             onClick = onCreateTripClick,
             icon = {
@@ -72,9 +83,12 @@ fun DestinationsRoute(
                     contentDescription = "Add Trip"
                 )
             },
+            contentColor = MaterialTheme.colorScheme.surface,
+            containerColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .padding(32.dp)
         )
     }
 }
@@ -118,6 +132,22 @@ fun DestinationsList(
     destinations: List<Destination>,
     onClick: (Destination) -> Unit
 ) {
+    val pagerState = rememberPagerState(pageCount = {
+        destinations.size
+    })
+    HorizontalPager(
+        state = pagerState,
+        pageSpacing = 16.dp,
+        contentPadding = PaddingValues(horizontal = 32.dp),
+    ) { page ->
+        DestinationListItem(
+            destination = destinations[page],
+            pagerState = pagerState,
+            page = page,
+            onClick = onClick
+        )
+    }
+    /* TODO clean up when you make your mind
     LazyColumn(
         contentPadding = PaddingValues(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -127,29 +157,55 @@ fun DestinationsList(
             DestinationListItem(destination, onClick)
         }
     }
+    */
 }
 
 @Composable
 fun DestinationListItem(
     destination: Destination,
+    pagerState: PagerState,
+    page: Int,
     onClick: (Destination) -> Unit
 ) {
+    val pageOffset = (
+            (pagerState.currentPage - page) + pagerState
+                .currentPageOffsetFraction
+            ).absoluteValue
+
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleY = lerp(
+                    start = 0.8f,
+                    stop = 1f,
+                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                )
+            },
         onClick = { onClick(destination) },
         elevation = CardDefaults.cardElevation(
-            defaultElevation = 16.dp
+            defaultElevation = 8.dp
         ),
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Column {
             PlacePhoto(
                 imageUrl = destination.thumbnail,
                 maxWidthPx = 600,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp)
+                    .height(400.dp)
+                    .graphicsLayer {
+                        scaleX = lerp(
+                            start = 1f,
+                            stop = 1.2f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                        scaleY = lerp(
+                            start = 1f,
+                            stop = 1.2f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
+                    }
             )
             Row(
                 modifier = Modifier
