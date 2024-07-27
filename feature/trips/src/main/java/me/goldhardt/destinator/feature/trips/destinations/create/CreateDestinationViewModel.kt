@@ -38,7 +38,12 @@ sealed class CreateDestinationUiState {
         val city: String
     ) : CreateDestinationUiState()
 
-    data object Failed : CreateDestinationUiState()
+    data class Failed(
+        override val city: String,
+        override val fromMs: Long,
+        override val toMs: Long,
+        override val tripStyle: List<String>
+    ) : CreateDestinationUiState(), ItineraryRequest
 }
 
 @HiltViewModel
@@ -71,7 +76,12 @@ class CreateDestinationViewModel @Inject constructor(
                     CreateDestinationUiState.Generated(it, itineraryRequest.city)
                 )
             } ?: run {
-                _uiState.tryEmit(CreateDestinationUiState.Failed)
+                _uiState.tryEmit(CreateDestinationUiState.Failed(
+                    city = itineraryRequest.city,
+                    fromMs = itineraryRequest.fromMs,
+                    toMs = itineraryRequest.toMs,
+                    tripStyle = itineraryRequest.tripStyle
+                ))
             }
         }
     }
@@ -79,8 +89,12 @@ class CreateDestinationViewModel @Inject constructor(
     fun setCity(city: String) {
         _uiState.update { currentState ->
             when (currentState) {
+                /**
+                 * TODO fix this repetition
+                 */
                 is CreateDestinationUiState.Creating -> currentState.copy(city = city)
                 is CreateDestinationUiState.Processing -> currentState.copy(city = city)
+                is CreateDestinationUiState.Failed -> currentState.copy(city = city)
                 else -> currentState
             }
         }
@@ -91,6 +105,7 @@ class CreateDestinationViewModel @Inject constructor(
             when (currentState) {
                 is CreateDestinationUiState.Creating -> currentState.copy(fromMs = fromMs, toMs = toMs)
                 is CreateDestinationUiState.Processing -> currentState.copy(fromMs = fromMs, toMs = toMs)
+                is CreateDestinationUiState.Failed -> currentState.copy(fromMs = fromMs, toMs = toMs)
                 else -> currentState
             }
         }
@@ -101,6 +116,7 @@ class CreateDestinationViewModel @Inject constructor(
             when (currentState) {
                 is CreateDestinationUiState.Creating -> currentState.copy(tripStyle = tripStyle)
                 is CreateDestinationUiState.Processing -> currentState.copy(tripStyle = tripStyle)
+                is CreateDestinationUiState.Failed -> currentState.copy(tripStyle = tripStyle)
                 else -> currentState
             }
         }

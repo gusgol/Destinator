@@ -242,7 +242,7 @@ fun GeneratingItinerary(
         is CreateDestinationUiState.Creating -> {
             viewModel.generate()
         }
-        CreateDestinationUiState.Failed -> {
+        is CreateDestinationUiState.Failed -> {
             GenerateItineraryFailed(viewModel)
         }
         is CreateDestinationUiState.Generated -> {
