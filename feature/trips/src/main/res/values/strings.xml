@@ -34,4 +34,10 @@
     <string name="trip_style_cultural_experiences">Cultural Experiences</string>
     <string name="trip_style_photography_spots">Photography Spots</string>
     <string name="trip_style_romantic_getaways">Romantic Getaways</string>
+    <string name="action_create_itinerary">Create Itinerary</string>
+
+    <!-- Destination Status -->
+    <string name="destination_status_current">Current</string>
+    <string name="destination_status_upcoming">Upcoming</string>
+    <string name="destination_status_completed">Completed</string>
 </resources>

@@ -42,7 +42,6 @@ class DefaultDestinationsRepository @Inject constructor(
                 latitude = destinationItinerary.latitude,
                 longitude = destinationItinerary.longitude
             )
-            Log.e("DefaultDestinationsRepository", "createDestination: $destinationPlace")
             val destinationId =
                 destinationsDao.insertDestination(
                     DestinationEntity(
@@ -95,6 +94,8 @@ class DefaultDestinationsRepository @Inject constructor(
     override fun getDestinations(): Flow<List<Destination>> =
         destinationsDao.getDestinationsWithItinerary()
             .map { list ->
-                list.map { it.toDestination() }
+                list.map {
+                    it.toDestination()
+                }.sortedBy {  it.status.ordinal }
             }
 }

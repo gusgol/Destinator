@@ -28,11 +28,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -45,12 +53,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import me.goldhardt.destinator.core.designsystem.Tokens
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
 import me.goldhardt.destinator.core.designsystem.components.StaticMapImage
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
-import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.data.extensions.formatDates
 import me.goldhardt.destinator.data.model.destination.Destination
+import me.goldhardt.destinator.data.model.destination.DestinationStatus
 import me.goldhardt.destinator.feature.trips.R
 import kotlin.math.absoluteValue
 
@@ -61,17 +70,17 @@ fun DestinationsRoute(
     onCreateTripClick: () -> Unit,
 ) {
     val uiState by destinationsViewModel.uiState.collectAsStateWithLifecycle()
-    Box(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .paddingTopBarAndStatusBar(),
-        contentAlignment = Alignment.Center
+            .fillMaxSize(),
     ) {
-        DestinationsList(uiState, onDestinationClick)
+        Box(modifier = Modifier.weight(1f)) {
+            DestinationsList(uiState, onDestinationClick)
+        }
         ExtendedFloatingActionButton(
             text = {
                 Text(
-                    text = "Create Itinerary",
+                    text = stringResource(R.string.action_create_itinerary),
                     style = MaterialTheme.typography.titleMedium,
                 )
             },
@@ -79,13 +88,12 @@ fun DestinationsRoute(
             icon = {
                 Icon(
                     painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_travel),
-                    contentDescription = "Add Trip"
+                    contentDescription = stringResource(R.string.action_create_itinerary)
                 )
             },
             contentColor = MaterialTheme.colorScheme.surface,
             containerColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier
-                .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(32.dp)
         )
@@ -134,30 +142,47 @@ fun DestinationsList(
     val pagerState = rememberPagerState(pageCount = {
         destinations.size
     })
-    HorizontalPager(
-        state = pagerState,
-        pageSpacing = 16.dp,
-        contentPadding = PaddingValues(horizontal = 32.dp),
-    ) { page ->
-        val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
-            .absoluteValue
-        DestinationListItem(
-            destination = destinations[page],
-            pageOffset = pageOffset,
-            onClick = onClick
+    var title by rememberSaveable { mutableStateOf("") }
+    val context = LocalContext.current
+
+    Column {
+        Spacer(modifier = Modifier.height(Tokens.TopBar.height))
+        Text(
+            text = title,
+            style = MaterialTheme.typography.displayLarge.copy(
+                brush = Brush.linearGradient(
+                    colors = Tokens.Gradient.colors
+                )
+            ),
+            modifier = Modifier.fillMaxWidth(),
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 42.sp,
+            letterSpacing = 2.sp,
+            textAlign = TextAlign.Center
         )
-    }
-    /* TODO clean up when you make your mind
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(destinations) { destination ->
-            DestinationListItem(destination, onClick)
+        Spacer(modifier = Modifier.weight(1f))
+        HorizontalPager(
+            state = pagerState,
+            pageSpacing = 16.dp,
+            contentPadding = PaddingValues(horizontal = 32.dp),
+        ) { page ->
+            val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
+                .absoluteValue
+
+            LaunchedEffect(pagerState) {
+                snapshotFlow { pagerState.currentPage }.collect { page ->
+                    title = context.getString(destinations[page].status.displayName).uppercase()
+                }
+            }
+
+            DestinationListItem(
+                destination = destinations[page],
+                pageOffset = pageOffset,
+                onClick = onClick
+            )
         }
+        Spacer(modifier = Modifier.weight(0.8f))
     }
-    */
 }
 
 @Composable
@@ -166,6 +191,7 @@ fun DestinationListItem(
     pageOffset: Float,
     onClick: (Destination) -> Unit
 ) {
+    val completedColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -181,7 +207,16 @@ fun DestinationListItem(
             defaultElevation = 8.dp
         ),
     ) {
-        Column {
+        Column(
+            modifier = if (destination.status == DestinationStatus.COMPLETED) {
+                Modifier.drawWithContent {
+                    drawContent()
+                    drawRect(color = completedColor)
+                }
+            } else {
+                Modifier
+            }
+        ) {
             PlacePhoto(
                 imageUrl = destination.thumbnail,
                 maxWidthPx = 600,
@@ -290,7 +325,11 @@ fun EmptyDestinations() {
     val heading = buildAnnotatedString {
         append(stringResource(R.string.title_empty_heading_1))
         append(" ")
-        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+        withStyle(
+            style = SpanStyle(brush = Brush.linearGradient(
+                colors = Tokens.Gradient.colors
+            ))
+        ) {
             append(stringResource(R.string.title_empty_heading_2))
         }
         append("!")
