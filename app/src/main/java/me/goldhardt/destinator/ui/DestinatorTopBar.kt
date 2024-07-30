@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import me.goldhardt.destinator.R
 import me.goldhardt.destinator.navigation.START_DESTINATION
@@ -22,8 +23,6 @@ fun DestinatorTopBar(
     appState: DestinatorAppState,
 ) {
     CenterAlignedTopAppBar(
-//        modifier = Modifier
-//            .padding(top = Tokens.StatusBar.height),
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
         ),
@@ -34,6 +33,7 @@ fun DestinatorTopBar(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
             }
         },

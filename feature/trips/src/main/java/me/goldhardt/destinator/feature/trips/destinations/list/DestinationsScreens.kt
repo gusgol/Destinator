@@ -2,6 +2,7 @@
 
 package me.goldhardt.destinator.feature.trips.destinations.list
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,14 +24,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SecondaryScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -40,7 +45,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -53,6 +57,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import me.goldhardt.destinator.core.designsystem.Tokens
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
 import me.goldhardt.destinator.core.designsystem.components.StaticMapImage
@@ -134,32 +140,93 @@ fun DestinationsList(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DestinationsList(
     destinations: List<Destination>,
     onClick: (Destination) -> Unit
 ) {
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = {
         destinations.size
     })
-    var title by rememberSaveable { mutableStateOf("") }
-    val context = LocalContext.current
+
+    var selectedTab by rememberSaveable { mutableStateOf(DestinationStatus.CURRENT) }
 
     Column {
         Spacer(modifier = Modifier.height(Tokens.TopBar.height))
-        Text(
-            text = title,
-            style = MaterialTheme.typography.displayLarge.copy(
-                brush = Brush.linearGradient(
-                    colors = Tokens.Gradient.colors
+//        Text(
+//            text = title,
+//            style = MaterialTheme.typography.displayLarge.copy(
+//                brush = Brush.linearGradient(
+//                    colors = Tokens.Gradient.colors
+//                )
+//            ),
+//            modifier = Modifier.fillMaxWidth(),
+//            fontWeight = FontWeight.ExtraBold,
+//            fontSize = 42.sp,
+//            letterSpacing = 2.sp,
+//            textAlign = TextAlign.Center
+//        )
+        SecondaryScrollableTabRow(
+            selectedTabIndex = selectedTab.ordinal,
+            divider = {
+                SubtleHorizontalDivider()
+            },
+            indicator = {
+            }
+        ) {
+            val availableStatuses = destinations.map { it.status }.distinct()
+            DestinationStatus.entries.forEachIndexed { index, value ->
+                val isSelected = value == selectedTab
+                val fontSize by animateFloatAsState(targetValue = if (isSelected) 24f else 16f,
+                    label = "tabText"
                 )
-            ),
-            modifier = Modifier.fillMaxWidth(),
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 42.sp,
-            letterSpacing = 2.sp,
-            textAlign = TextAlign.Center
-        )
+                Tab(
+                    selected = isSelected,
+                    onClick = {
+                        selectedTab = value
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(destinations.indexOf(
+                                destinations.first { it.status == selectedTab }
+                            ))
+                        }
+                    },
+                    enabled = value in availableStatuses,
+                    selectedContentColor = MaterialTheme.colorScheme.outline.copy(0.05f),
+                    text = {
+                        Column(
+                            modifier = Modifier
+                                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+                        ) {
+                            Text(
+                                text = stringResource(value.displayName),
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = fontSize.sp,
+                                style = if (isSelected) {
+                                    MaterialTheme.typography.titleMedium.copy(
+                                        brush = Brush.linearGradient(
+                                            colors = Tokens.Gradient.colors
+                                        )
+                                    )
+                                } else {
+                                    if (value in availableStatuses) {
+                                        MaterialTheme.typography.titleMedium.copy(
+                                            color = MaterialTheme.colorScheme.primary,
+                                        )
+                                    } else {
+                                        MaterialTheme.typography.titleMedium.copy(
+                                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        }
         Spacer(modifier = Modifier.weight(1f))
         HorizontalPager(
             state = pagerState,
@@ -171,7 +238,9 @@ fun DestinationsList(
 
             LaunchedEffect(pagerState) {
                 snapshotFlow { pagerState.currentPage }.collect { page ->
-                    title = context.getString(destinations[page].status.displayName).uppercase()
+                    destinations.getOrNull(page)?.let { destination ->
+                        selectedTab = destination.status
+                    }
                 }
             }
 

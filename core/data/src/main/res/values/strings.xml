@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Destination Status -->
+    <string name="destination_status_current">Current</string>
+    <string name="destination_status_upcoming">Upcoming</string>
+    <string name="destination_status_completed">Completed</string>
+</resources>
