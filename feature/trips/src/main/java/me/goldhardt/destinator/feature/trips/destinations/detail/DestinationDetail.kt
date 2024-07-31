@@ -1,7 +1,10 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -30,11 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -228,10 +233,17 @@ fun ItineraryItem(
     isFirst: Boolean,
     item: ItineraryItem
 ) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .padding(horizontal = 16.dp)
             .height(IntrinsicSize.Min)
+            .clickable(onClick = {
+                item.mapProviderUri?.let {
+                    val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                    context.startActivity(mapIntent)
+                }
+            })
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

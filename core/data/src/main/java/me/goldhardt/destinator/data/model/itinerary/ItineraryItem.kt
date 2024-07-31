@@ -13,8 +13,17 @@ class ItineraryItem(
     val tripDay: Int,
     val iconUrl: String?,
     val metadataSourceId: String?,
-    val photos: List<String> = emptyList()
-)
+    val photos: List<String> = emptyList(),
+) {
+    companion object {
+        private const val MAPS_URI =
+            "https://www.google.com/maps/search/?api=1&query=%s&query_place_id=%s"
+    }
+    val mapProviderUri: String?
+        get() = metadataSourceId?.let { sourceId ->
+            MAPS_URI.format(name, sourceId)
+        }
+}
 
 fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
     ItineraryItem(
