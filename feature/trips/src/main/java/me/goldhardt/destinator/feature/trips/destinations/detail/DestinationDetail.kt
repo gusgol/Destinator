@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,12 +45,15 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import me.goldhardt.destinator.core.common.LocalMenuItemState
+import me.goldhardt.destinator.core.common.MenuItem
 import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
 import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
 import me.goldhardt.destinator.core.designsystem.components.SubtleVerticalDivider
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
+import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL_ROUTE
 import me.goldhardt.destinator.feature.trips.R
 import java.time.Duration
 import java.time.LocalTime
@@ -82,13 +87,42 @@ fun DestinationDetail(
     val selectedItems = uiState.destination.itinerary.filter {
         it.tripDay == uiState.calendar[selectedTab].day
     }
+    var isFullscreen by rememberSaveable { mutableStateOf(false) }
+    val mapSize: Float by animateFloatAsState(if (isFullscreen) 1f else 2.4f, label = "mapSize")
+    val menu = LocalMenuItemState.current
+
+    LaunchedEffect(isFullscreen) {
+        menu.setMenuItems(DESTINATION_DETAIL_ROUTE, mutableListOf<MenuItem>().apply {
+            if (isFullscreen) {
+                add(
+                    MenuItem(
+                        "exit_fullscreen",
+                        R.string.action_exit_fullscreen,
+                        me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen_exit
+                    ) {
+                        isFullscreen = false
+                    })
+            } else {
+                add(
+                    MenuItem(
+                        "enter_fullscreen",
+                        R.string.action_enter_fullscreen,
+                        me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen
+                    ) {
+                        isFullscreen = true
+                    })
+            }
+        }
+        )
+    }
+
     Column {
         DestinationMap(
             LatLng(uiState.destination.latitude, uiState.destination.longitude),
             selectedItems,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(LocalConfiguration.current.screenHeightDp.div(2.4).dp)
+                .height(LocalConfiguration.current.screenHeightDp.div(mapSize).dp)
         )
         SecondaryScrollableTabRow(
             selectedTabIndex = selectedTab,

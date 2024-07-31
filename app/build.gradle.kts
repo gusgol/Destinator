@@ -55,6 +55,7 @@ android {
 dependencies {
     // Modules
     implementation(projects.core.designsystem)
+    implementation(projects.core.common)
     implementation(projects.feature.trips)
 
     // Core

@@ -21,15 +21,18 @@ import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
 import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
 import me.goldhardt.destinator.feature.trips.destinations.list.DestinationsRoute
 
-const val DESTINATIONS_ROUTE = "trips"
-const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
-const val DESTINATION_ID = "destinationId"
-const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
 /**
  * Used to display the destination title on the top bar title.
  * @see DestinatorAppState
  */
 const val TITLE = "title"
+
+const val DESTINATIONS_ROUTE = "trips"
+const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
+const val DESTINATION_ID = "destinationId"
+const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
+const val DESTINATION_DETAIL_ROUTE = "$DESTINATION_DETAIL/{$DESTINATION_ID}?$TITLE={$TITLE}"
+
 
 /**
  * Nested navigation for create trip
@@ -42,7 +45,7 @@ object CreateTripScreens {
 }
 
 fun NavGraphBuilder.tripsScreens(
-    navController: NavHostController,
+    navController: NavHostController
 ) {
     composable(
         route = DESTINATIONS_ROUTE
@@ -74,7 +77,7 @@ fun NavGraphBuilder.tripsScreens(
         }
     }
     composable(
-        route = "$DESTINATION_DETAIL/{$DESTINATION_ID}?$TITLE={$TITLE}",
+        route = DESTINATION_DETAIL_ROUTE,
         arguments = listOf(
             navArgument(DESTINATION_ID) { type = NavType.LongType },
             navArgument(TITLE) {

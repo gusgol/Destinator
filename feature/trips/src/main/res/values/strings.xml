@@ -8,6 +8,8 @@
     <!--    hint_: for input hints.-->
     <!--    error_: for error messages.-->
     <string name="action_try_again">Try again!</string>
+    <string name="action_enter_fullscreen">Enter fullscreen</string>
+    <string name="action_exit_fullscreen">Exit fullscreen</string>
     <string name="cd_map_of">Map of %1$s</string>
     <string name="cd_select_destination">Select destination button</string>
     <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>

@@ -11,10 +11,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import me.goldhardt.destinator.R
+import me.goldhardt.destinator.core.common.LocalMenuItemState
 import me.goldhardt.destinator.navigation.START_DESTINATION
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,6 +26,9 @@ import me.goldhardt.destinator.navigation.START_DESTINATION
 fun DestinatorTopBar(
     appState: DestinatorAppState,
 ) {
+    val menuItemListener = LocalMenuItemState.current
+    val menuItemsMap by menuItemListener.menuItems.collectAsState()
+    val menuItemsActions = menuItemsMap[appState.currentDestination?.route] ?: emptyList()
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
@@ -54,5 +61,20 @@ fun DestinatorTopBar(
                 }
             }
         },
+        actions = {
+            menuItemsActions.forEach { item ->
+                IconButton(
+                    onClick = item.action,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                    ),
+                ) {
+                    Icon(
+                        painter = painterResource(id = item.iconRes),
+                        contentDescription = stringResource(id = item.titleRes)
+                    )
+                }
+            }
+        }
     )
 }

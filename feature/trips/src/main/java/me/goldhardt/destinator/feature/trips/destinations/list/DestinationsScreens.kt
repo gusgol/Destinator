@@ -155,19 +155,6 @@ fun DestinationsList(
 
     Column {
         Spacer(modifier = Modifier.height(Tokens.TopBar.height))
-//        Text(
-//            text = title,
-//            style = MaterialTheme.typography.displayLarge.copy(
-//                brush = Brush.linearGradient(
-//                    colors = Tokens.Gradient.colors
-//                )
-//            ),
-//            modifier = Modifier.fillMaxWidth(),
-//            fontWeight = FontWeight.ExtraBold,
-//            fontSize = 42.sp,
-//            letterSpacing = 2.sp,
-//            textAlign = TextAlign.Center
-//        )
         SecondaryScrollableTabRow(
             selectedTabIndex = selectedTab.ordinal,
             divider = {
