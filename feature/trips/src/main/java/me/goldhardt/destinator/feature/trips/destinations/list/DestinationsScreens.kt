@@ -264,20 +264,18 @@ fun DestinationListItem(
             defaultElevation = 8.dp
         ),
     ) {
-        Column(
-            modifier = if (destination.status == DestinationStatus.COMPLETED) {
-                Modifier.drawWithContent {
-                    drawContent()
-                    drawRect(color = completedColor)
-                }
-            } else {
-                Modifier
-            }
-        ) {
+        Column {
             PlacePhoto(
                 imageUrl = destination.thumbnail,
                 maxWidthPx = 600,
-                modifier = Modifier
+                modifier = if (destination.status == DestinationStatus.COMPLETED) {
+                        Modifier.drawWithContent {
+                            drawContent()
+                            drawRect(color = completedColor)
+                        }
+                    } else {
+                        Modifier
+                    }
                     .fillMaxWidth()
                     .height(400.dp)
                     .graphicsLayer {
@@ -296,7 +294,7 @@ fun DestinationListItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(
