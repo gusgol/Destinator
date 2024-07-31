@@ -58,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import me.goldhardt.destinator.core.designsystem.Tokens
 import me.goldhardt.destinator.core.designsystem.components.NextStepButton
 import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
@@ -292,7 +293,11 @@ fun ProcessingItineraryRequest() {
 
     // Plane 1
     val plane1: Dp by animateDpAsState(
-        if (animationState == PlaneAnimationState.Start) 64.dp else -height,
+        if (animationState == PlaneAnimationState.Start) {
+            64.dp
+        } else {
+            -height - Tokens.TopBar.height - Tokens.StatusBar.height
+        },
         keyframes {
             durationMillis = 10_000
         }, label = "plane1"
@@ -326,7 +331,6 @@ fun ProcessingItineraryRequest() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .paddingTopBarAndStatusBar(),
     )  {
         Image(
             painter = painterResource(me.goldhardt.destinator.core.designsystem.R.drawable.ic_plane),
