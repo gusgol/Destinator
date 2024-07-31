@@ -79,46 +79,51 @@ fun SelectDestination(
     var selectedCity by rememberSaveable { mutableStateOf("") }
     val backgroundColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .paddingTopBarAndStatusBar()
             .imePadding()
     ) {
-        Spacer(modifier = Modifier.height(120.dp))
-        CreateTripTitle(resourceId = R.string.title_trip_destination)
-        TextField(
-            value = selectedCity,
-            textStyle = LocalTextStyle.current.copy(fontSize = 20.sp),
-            onValueChange = { selectedCity = it },
-            placeholder = {
-                Text(
-                    stringResource(R.string.hint_enter_destination),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            },
-            singleLine = true,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            colors = TextFieldDefaults.colors(
-                unfocusedContainerColor = backgroundColor,
-                focusedContainerColor = backgroundColor,
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent
+                .fillMaxSize()
+        ) {
+            Spacer(modifier = Modifier.height(120.dp))
+            CreateTripTitle(resourceId = R.string.title_trip_destination)
+            TextField(
+                value = selectedCity,
+                textStyle = LocalTextStyle.current.copy(fontSize = 20.sp),
+                onValueChange = { selectedCity = it },
+                placeholder = {
+                    Text(
+                        stringResource(R.string.hint_enter_destination),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = backgroundColor,
+                    focusedContainerColor = backgroundColor,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent
+                )
             )
-        )
-        Spacer(modifier = Modifier.weight(1f))
+        }
         NextStepButton(
             enabled = selectedCity.isNotBlank(),
-            modifier = Modifier.padding(48.dp)
+            modifier = Modifier.padding(36.dp).align(Alignment.BottomCenter)
         ) {
             viewModel.setCity(selectedCity)
             navController.navigate(CreateTripScreens.SELECT_DATES)
         }
     }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,7 +152,7 @@ fun SelectDates(
             ),
             headline = {},
             title = {
-                CreateTripTitle(resourceId = R.string.title_trip_destination)
+                CreateTripTitle(resourceId = R.string.title_trip_dates)
             },
             showModeToggle = false,
             modifier = Modifier
@@ -156,7 +161,7 @@ fun SelectDates(
         )
         NextStepButton(
             enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
-            modifier = Modifier.padding(48.dp)
+            modifier = Modifier.padding(36.dp)
         ) {
             viewModel.setDates(
                 state.selectedStartDateMillis ?: 0,
@@ -213,7 +218,7 @@ fun SelectTripStyle(
         NextStepButton(
             enabled = selectedStyles.isNotEmpty(),
             modifier = Modifier
-                .padding(48.dp)
+                .padding(36.dp)
         ) {
             viewModel.setTripStyle(
                 selectedStyles.map { it.name }

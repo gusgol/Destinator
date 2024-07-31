@@ -1,6 +1,6 @@
 package me.goldhardt.destinator.core.designsystem.components
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.FloatingActionButton
@@ -31,7 +31,7 @@ fun NextStepButton(
         },
         containerColor = containerColor,
         modifier = modifier
-            .size(64.dp),
+            .sizeIn(minWidth = 64.dp, minHeight = 64.dp),
     ) {
         Icon(
             Icons.AutoMirrored.Filled.ArrowForward,
