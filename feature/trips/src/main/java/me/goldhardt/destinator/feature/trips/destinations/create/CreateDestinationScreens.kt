@@ -118,14 +118,17 @@ fun SelectDestination(
         }
         NextStepButton(
             enabled = selectedCity.isNotBlank(),
-            modifier = Modifier.padding(36.dp).align(Alignment.BottomCenter)
+            modifier = Modifier
+                .padding(36.dp)
+                .align(Alignment.BottomCenter)
         ) {
             viewModel.setCity(selectedCity)
-            navController.navigate(CreateTripScreens.SELECT_DATES)
+            viewModel.validateCity()
+            navController.navigate(CreateTripScreens.VALIDATE_DESTINATION)
         }
     }
-
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -153,7 +156,12 @@ fun SelectDates(
             ),
             headline = {},
             title = {
-                CreateTripTitle(resourceId = R.string.title_trip_dates)
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CreateTripTitle(resourceId = R.string.title_trip_dates)
+                }
             },
             showModeToggle = false,
             modifier = Modifier

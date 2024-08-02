@@ -13,6 +13,8 @@
     <string name="cd_map_of">Map of %1$s</string>
     <string name="cd_select_destination">Select destination button</string>
     <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>
+    <string name="error_city_non_existent">We couldn\'t find any city with that name. Please, try again!</string>
+    <string name="error_generic">Something went wrong, please try again!</string>
     <string name="hint_enter_destination">London, Paris, any city… seriously!</string>
     <string name="title_empty_heading_1">Welcome to your</string>
     <string name="title_empty_heading_2">AI travel planner</string>
@@ -25,6 +27,8 @@
     <string name="title_trip_day">Day %1$s</string>
     <string name="title_trip_destination">Where are we going?</string>
     <string name="title_visit_time">Visit time・ %1$s</string>
+    <string name="title_multiple_destinations_found">We found multiple matches for your destination.</string>
+    <string name="title_select_one_destination">Which one?</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>

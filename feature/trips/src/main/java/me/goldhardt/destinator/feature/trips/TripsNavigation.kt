@@ -14,10 +14,12 @@ import me.goldhardt.destinator.feature.trips.CreateTripScreens.GENERATING_ITINER
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DATES
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_TRIP_STYLE
+import me.goldhardt.destinator.feature.trips.CreateTripScreens.VALIDATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.destinations.create.GeneratingItinerary
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestination
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
+import me.goldhardt.destinator.feature.trips.destinations.create.ValidateDestination
 import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
 import me.goldhardt.destinator.feature.trips.destinations.list.DestinationsRoute
 
@@ -39,6 +41,7 @@ const val DESTINATION_DETAIL_ROUTE = "$DESTINATION_DETAIL/{$DESTINATION_ID}?$TIT
  */
 object CreateTripScreens {
     const val SELECT_DESTINATION = "$CREATE_DESTINATION/select_destination"
+    const val VALIDATE_DESTINATION = "$CREATE_DESTINATION/validate_destination"
     const val SELECT_DATES = "$CREATE_DESTINATION/select_dates"
     const val SELECT_TRIP_STYLE = "$CREATE_DESTINATION/select_trip_style"
     const val GENERATING_ITINERARY = "$CREATE_DESTINATION/generating_itinerary"
@@ -65,6 +68,9 @@ fun NavGraphBuilder.tripsScreens(
     ) {
         composable(route = SELECT_DESTINATION) {
             SelectDestination(navController, it)
+        }
+        composable(route = VALIDATE_DESTINATION) {
+            ValidateDestination(navController, it)
         }
         composable(route = SELECT_DATES) {
             SelectDates(navController, it)

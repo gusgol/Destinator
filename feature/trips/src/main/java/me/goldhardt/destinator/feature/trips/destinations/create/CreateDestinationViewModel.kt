@@ -7,7 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import me.goldhardt.destinator.data.model.validation.ValidateDestinationResult
 import me.goldhardt.destinator.data.repository.DestinationsRepository
+import me.goldhardt.destinator.data.repository.ValidateDestinationRepository
+import me.goldhardt.destinator.feature.trips.R
 import javax.inject.Inject
 
 interface ItineraryRequest {
@@ -18,7 +21,6 @@ interface ItineraryRequest {
 }
 
 sealed class CreateDestinationUiState {
-
     data class Creating(
         override val city: String = "",
         override val fromMs: Long = 0,
@@ -46,13 +48,29 @@ sealed class CreateDestinationUiState {
     ) : CreateDestinationUiState(), ItineraryRequest
 }
 
+sealed class DestinationValidationState {
+    data object Loading : DestinationValidationState()
+    data object Success : DestinationValidationState()
+    data class SuccessMultiple(
+        val options: List<String>
+    ) : DestinationValidationState()
+    data class Invalid(
+        val errorMessage: Int
+    ) : DestinationValidationState()
+}
+
 @HiltViewModel
 class CreateDestinationViewModel @Inject constructor(
-    private val destinationsRepository: DestinationsRepository
+    private val destinationsRepository: DestinationsRepository,
+    private val validateDestinationRepository: ValidateDestinationRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<CreateDestinationUiState>(CreateDestinationUiState.Creating())
     val uiState: StateFlow<CreateDestinationUiState> = _uiState
+
+    private val _destinationValidationState =
+        MutableStateFlow<DestinationValidationState>(DestinationValidationState.Loading)
+    val destinationValidationState: StateFlow<DestinationValidationState> = _destinationValidationState
 
     fun generate() {
         val itineraryRequest = _uiState.value as? ItineraryRequest ?: return
@@ -118,6 +136,28 @@ class CreateDestinationViewModel @Inject constructor(
                 is CreateDestinationUiState.Processing -> currentState.copy(tripStyle = tripStyle)
                 is CreateDestinationUiState.Failed -> currentState.copy(tripStyle = tripStyle)
                 else -> currentState
+            }
+        }
+    }
+
+    fun validateCity() {
+        val state = _uiState.value as? ItineraryRequest ?: run {
+            _destinationValidationState.tryEmit(DestinationValidationState.Invalid(R.string.error_generic))
+            return
+        }
+        _destinationValidationState.tryEmit(DestinationValidationState.Loading)
+        viewModelScope.launch {
+            val result = validateDestinationRepository.validate(state.city)
+            result.getOrNull()?.let { response ->
+                val updatedState = when (response.result) {
+                    ValidateDestinationResult.success -> DestinationValidationState.Success
+                    ValidateDestinationResult.multiple -> DestinationValidationState.SuccessMultiple(
+                        response.options.map { "${it.city}, ${it.state}, ${it.country}" }
+                    )
+                    ValidateDestinationResult.non_existent ->
+                        DestinationValidationState.Invalid(R.string.error_city_non_existent)
+                }
+                _destinationValidationState.tryEmit(updatedState)
             }
         }
     }
