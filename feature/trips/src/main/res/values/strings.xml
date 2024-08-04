@@ -7,7 +7,7 @@
     <!--    label_: for labels of inputs, TextViews, etc.-->
     <!--    hint_: for input hints.-->
     <!--    error_: for error messages.-->
-    <string name="action_try_again">Try again!</string>
+    <string name="action_try_again">Try again</string>
     <string name="action_enter_fullscreen">Enter fullscreen</string>
     <string name="action_exit_fullscreen">Exit fullscreen</string>
     <string name="cd_map_of">Map of %1$s</string>
@@ -46,4 +46,7 @@
     <string name="destination_status_current">Current</string>
     <string name="destination_status_upcoming">Upcoming</string>
     <string name="destination_status_completed">Completed</string>
+    <string name="title_searching">Searching...</string>
+    <string name="error_failed_loading_destination">Failed to load this destination. Please, try again!</string>
+    <string name="title_loading">Loading...</string>
 </resources>
