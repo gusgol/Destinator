@@ -50,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -160,7 +159,7 @@ fun DestinationsList(
     val pagerState = rememberPagerState(pageCount = {
         destinations.size
     })
-    var selectedTab by rememberSaveable { mutableStateOf(DestinationStatus.CURRENT) }
+    var selectedTab by rememberSaveable { mutableStateOf(destinations.first().status) }
 
     Column {
         Spacer(modifier = Modifier.height(Tokens.TopBar.height))
