@@ -2,6 +2,7 @@
 
 package me.goldhardt.destinator.feature.trips.destinations.list
 
+import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -12,12 +13,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,7 +50,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -141,104 +149,213 @@ fun DestinationsList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DestinationsList(
     destinations: List<Destination>,
     onClick: (Destination) -> Unit
 ) {
+    val isPortrait = LocalConfiguration.current.orientation ==
+            Configuration.ORIENTATION_PORTRAIT
     val coroutineScope: CoroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = {
         destinations.size
     })
-
     var selectedTab by rememberSaveable { mutableStateOf(DestinationStatus.CURRENT) }
 
     Column {
         Spacer(modifier = Modifier.height(Tokens.TopBar.height))
-        SecondaryScrollableTabRow(
-            selectedTabIndex = selectedTab.ordinal,
-            divider = {
-                SubtleHorizontalDivider()
-            },
-            indicator = {
-            }
-        ) {
-            val availableStatuses = destinations.map { it.status }.distinct()
-            DestinationStatus.entries.forEachIndexed { index, value ->
-                val isSelected = value == selectedTab
-                val fontSize by animateFloatAsState(targetValue = if (isSelected) 24f else 16f,
-                    label = "tabText"
+        DestinationsStatusTabs(
+            destinations = destinations,
+            selectedTab = selectedTab,
+            onTabSelected = { status ->
+                selectedTab = status
+                val firstItem = destinations.indexOf(
+                    destinations.first { it.status == selectedTab }
                 )
-                Tab(
-                    selected = isSelected,
-                    onClick = {
-                        selectedTab = value
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(destinations.indexOf(
-                                destinations.first { it.status == selectedTab }
-                            ))
-                        }
-                    },
-                    enabled = value in availableStatuses,
-                    selectedContentColor = MaterialTheme.colorScheme.outline.copy(0.05f),
-                    text = {
-                        Column(
-                            modifier = Modifier
-                                .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
-                        ) {
-                            Text(
-                                text = stringResource(value.displayName),
-                                maxLines = 1,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = fontSize.sp,
-                                style = if (isSelected) {
-                                    MaterialTheme.typography.titleMedium.copy(
-                                        brush = Brush.linearGradient(
-                                            colors = Tokens.Gradient.colors
-                                        )
-                                    )
-                                } else {
-                                    if (value in availableStatuses) {
-                                        MaterialTheme.typography.titleMedium.copy(
-                                            color = MaterialTheme.colorScheme.primary,
-                                        )
-                                    } else {
-                                        MaterialTheme.typography.titleMedium.copy(
-                                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                    }
-                )
-            }
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        HorizontalPager(
-            state = pagerState,
-            pageSpacing = 16.dp,
-            contentPadding = PaddingValues(horizontal = 32.dp),
-        ) { page ->
-            val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
-                .absoluteValue
-
-            LaunchedEffect(pagerState) {
-                snapshotFlow { pagerState.currentPage }.collect { page ->
-                    destinations.getOrNull(page)?.let { destination ->
-                        selectedTab = destination.status
+                coroutineScope.launch {
+                    if (isPortrait) {
+                        pagerState.animateScrollToPage(firstItem)
                     }
                 }
             }
-
-            DestinationListItem(
-                destination = destinations[page],
-                pageOffset = pageOffset,
+        )
+        if (isPortrait) {
+            Spacer(modifier = Modifier.weight(1f))
+            DestinationsPager(
+                pagerState = pagerState,
+                destinations = destinations,
+                selectTab = {
+                    selectedTab = it
+                },
+                onClick = onClick
+            )
+            Spacer(modifier = Modifier.weight(0.8f))
+        } else {
+            DestinationsRow(
+                destinations = destinations.filter {
+                    it.status == selectedTab
+                },
                 onClick = onClick
             )
         }
-        Spacer(modifier = Modifier.weight(0.8f))
+    }
+}
+
+@Composable
+private fun DestinationsPager(
+    pagerState: PagerState,
+    destinations: List<Destination>,
+    selectTab: (DestinationStatus) -> Unit,
+    onClick: (Destination) -> Unit
+) {
+    HorizontalPager(
+        state = pagerState,
+        pageSpacing = 16.dp,
+        contentPadding = PaddingValues(horizontal = 32.dp),
+    ) { page ->
+        val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction)
+            .absoluteValue
+
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                destinations.getOrNull(page)?.let { destination ->
+                    selectTab(destination.status)
+                }
+            }
+        }
+
+        DestinationListItem(
+            destination = destinations[page],
+            pageOffset = pageOffset,
+            onClick = onClick
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DestinationsStatusTabs(
+    destinations: List<Destination>,
+    selectedTab: DestinationStatus,
+    onTabSelected: (DestinationStatus) -> Unit
+) {
+    SecondaryScrollableTabRow(
+        selectedTabIndex = selectedTab.ordinal,
+        divider = {
+            SubtleHorizontalDivider()
+        },
+        indicator = {
+        },
+    ) {
+        val availableStatuses = destinations.map { it.status }.distinct()
+        DestinationStatus.entries.forEachIndexed { index, value ->
+            val isSelected = value == selectedTab
+            val fontSize by animateFloatAsState(targetValue = if (isSelected) 24f else 16f,
+                label = "tabText"
+            )
+            Tab(
+                selected = isSelected,
+                onClick = {
+                    onTabSelected(value)
+                },
+                enabled = value in availableStatuses,
+                selectedContentColor = MaterialTheme.colorScheme.outline.copy(0.05f),
+                text = {
+                    Column(
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(16.dp))
+                    ) {
+                        Text(
+                            text = stringResource(value.displayName),
+                            maxLines = 1,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = fontSize.sp,
+                            style = if (isSelected) {
+                                MaterialTheme.typography.titleMedium.copy(
+                                    brush = Brush.linearGradient(
+                                        colors = Tokens.Gradient.colors
+                                    )
+                                )
+                            } else {
+                                if (value in availableStatuses) {
+                                    MaterialTheme.typography.titleMedium.copy(
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                } else {
+                                    MaterialTheme.typography.titleMedium.copy(
+                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.5f),
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun DestinationsRow(
+    destinations: List<Destination>,
+    onClick: (Destination) -> Unit
+) {
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        items(destinations) { destination ->
+            DestinationRowItem(
+                destination = destination,
+                onClick = onClick
+            )
+        }
+    }
+}
+
+@Composable
+fun DestinationRowItem(
+    destination: Destination,
+    onClick: (Destination) -> Unit
+) {
+    val completedColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+    Card(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(400.dp),
+        onClick = {
+            onClick(destination)
+        },
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp
+        ),
+    ) {
+        Row(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surfaceBright),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlacePhoto(
+                imageUrl = destination.thumbnail,
+                maxWidthPx = 600,
+                modifier = if (destination.status == DestinationStatus.COMPLETED) {
+                    Modifier.drawWithContent {
+                        drawContent()
+                        drawRect(color = completedColor)
+                    }
+                } else {
+                    Modifier
+                }
+                    .fillMaxHeight()
+                    .weight(1f)
+            )
+            DestinationDetail(
+                destination = destination,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .weight(2f),
+            )
+        }
     }
 }
 
@@ -269,13 +386,13 @@ fun DestinationListItem(
                 imageUrl = destination.thumbnail,
                 maxWidthPx = 600,
                 modifier = if (destination.status == DestinationStatus.COMPLETED) {
-                        Modifier.drawWithContent {
-                            drawContent()
-                            drawRect(color = completedColor)
-                        }
-                    } else {
-                        Modifier
+                    Modifier.drawWithContent {
+                        drawContent()
+                        drawRect(color = completedColor)
                     }
+                } else {
+                    Modifier
+                }
                     .fillMaxWidth()
                     .height(400.dp)
                     .graphicsLayer {
@@ -297,63 +414,12 @@ fun DestinationListItem(
                     .background(MaterialTheme.colorScheme.surfaceBright),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Column(
+                DestinationDetail(
+                    destination = destination,
                     modifier = Modifier
                         .padding(16.dp)
-                        .weight(1.2f),
-                ) {
-                    Text(
-                        text = "${destination.city}, ${destination.country}",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            Icons.Rounded.DateRange,
-                            contentDescription = "Icon Description",
-                            modifier = Modifier.size(16.dp),
-                            tint = MaterialTheme.colorScheme.outline
-                        )
-                        Text(
-                            text = formatDates(destination.from, destination.to),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.outline,
-                            letterSpacing = 0.sp,
-                            modifier = Modifier.padding(horizontal = 2.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    SubtleHorizontalDivider()
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.title_total),
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.outline,
-                        )
-                        Text(
-                            text = stringResource(
-                                R.string.title_s_places,
-                                destination.itinerary.count()
-                            ),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End,
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold,
-                        )
-
-                    }
-                }
+                        .weight(1.2f)
+                )
                 Box(
                     modifier = Modifier
                         .padding(top = 16.dp, end = 16.dp, bottom = 16.dp, start = 8.dp)
@@ -373,6 +439,66 @@ fun DestinationListItem(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DestinationDetail(
+    destination: Destination,
+    modifier: Modifier
+) {
+    Column(modifier) {
+        Text(
+            text = "${destination.city}, ${destination.country}",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Spacer(modifier = Modifier.height(2.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Rounded.DateRange,
+                contentDescription = "Icon Description",
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.outline
+            )
+            Text(
+                text = formatDates(destination.from, destination.to),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline,
+                letterSpacing = 0.sp,
+                modifier = Modifier.padding(horizontal = 2.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        SubtleHorizontalDivider()
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.title_total),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.outline,
+            )
+            Text(
+                text = stringResource(
+                    R.string.title_s_places,
+                    destination.itinerary.count()
+                ),
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+            )
+
         }
     }
 }
