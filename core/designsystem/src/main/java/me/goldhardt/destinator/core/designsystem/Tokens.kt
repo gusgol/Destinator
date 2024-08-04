@@ -5,7 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
+import me.goldhardt.destinator.core.designsystem.theme.brandingPrimary
+import me.goldhardt.destinator.core.designsystem.theme.brandingSecondary
 
 @Suppress("KDocUnresolvedReference")
 object Tokens {
@@ -23,12 +24,8 @@ object Tokens {
     object Gradient {
         val colors: List<Color>
             @Composable get() = listOf(
-                // TODO decide what to do with these...
-//                MaterialTheme.colorScheme.tertiary,
-//                MaterialTheme.colorScheme.primary,
-//                MaterialTheme.colorScheme.secondary,
-                Color("#43C0D5".toColorInt()),
-                Color("#478AE2".toColorInt())
+                brandingPrimary,
+                brandingSecondary
             )
     }
 }
