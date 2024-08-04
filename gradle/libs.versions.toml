@@ -8,6 +8,7 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.3"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
+composeAnimation = "1.7.0-beta06"
 appcompat = "1.7.0"
 material = "1.12.0"
 uiTextGoogleFonts = "1.6.8"
@@ -23,6 +24,7 @@ room = "2.6.1"
 googleMaps = "6.1.0"
 googlePlaces = "3.5.0"
 coil = "2.7.0"
+accompanist = "0.34.0"
 
 
 [libraries]
@@ -35,6 +37,7 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 androidx-lifecycle-viewModel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
@@ -60,6 +63,7 @@ google-maps = { group = "com.google.maps.android", name = "maps-compose", versio
 google-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "googlePlaces" }
 coil = { group = "io.coil-kt", name = "coil", version = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

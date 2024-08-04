@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.viewModel.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.accompanist)
 
     // UI
     implementation(libs.androidx.activity.compose)
