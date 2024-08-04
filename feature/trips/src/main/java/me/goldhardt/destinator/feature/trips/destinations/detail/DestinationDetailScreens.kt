@@ -1,6 +1,7 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
@@ -54,7 +55,10 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import me.goldhardt.destinator.core.common.LocalMenuItemState
 import me.goldhardt.destinator.core.common.MenuItem
+import me.goldhardt.destinator.core.designsystem.Tokens
 import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
+import me.goldhardt.destinator.core.designsystem.components.ErrorScreen
+import me.goldhardt.destinator.core.designsystem.components.LoadingScreen
 import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
 import me.goldhardt.destinator.core.designsystem.components.SubtleVerticalDivider
@@ -72,11 +76,11 @@ fun DestinationDetail(
     val uiState by destinationDetailViewModel.uiState.collectAsStateWithLifecycle()
     when (uiState) {
         DestinationDetailUiState.Failed -> {
-            Text(text = "Failed...")
+            ErrorScreen(errorMessage = R.string.error_failed_loading_destination)
         }
 
         DestinationDetailUiState.Loading -> {
-            Text(text = "Loading...")
+            LoadingScreen(message = R.string.title_loading)
         }
 
         is DestinationDetailUiState.Success -> {
@@ -94,6 +98,7 @@ fun DestinationDetail(
     val selectedItems = uiState.destination.itinerary.filter {
         it.tripDay == uiState.calendar[selectedTab].day
     }
+    val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isFullscreen by rememberSaveable { mutableStateOf(false) }
     val mapSize: Float by animateFloatAsState(if (isFullscreen) 1f else 2.4f, label = "mapSize")
     val menu = LocalMenuItemState.current
@@ -123,59 +128,100 @@ fun DestinationDetail(
         )
     }
 
-    Column {
+    val mapModifier = if (isPortrait) {
+        Modifier
+            .fillMaxWidth()
+            .height(LocalConfiguration.current.screenHeightDp.div(mapSize).dp)
+    } else {
+        Modifier
+            .fillMaxHeight()
+            .width(LocalConfiguration.current.screenWidthDp.div(mapSize).dp)
+    }
+
+    DetailLayout(isPortrait) {
         DestinationMap(
             LatLng(uiState.destination.latitude, uiState.destination.longitude),
             selectedItems,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(LocalConfiguration.current.screenHeightDp.div(mapSize).dp)
+            modifier = mapModifier
         )
-        SecondaryScrollableTabRow(
-            selectedTabIndex = selectedTab,
-            divider = {
-            },
-            indicator = {
+        Column {
+            if (!isPortrait) {
+                Spacer(modifier = Modifier.height(Tokens.TopBar.height))
             }
-        ) {
-            uiState.calendar.forEachIndexed { index, tripDay ->
-                val isSelected = selectedTab == index
-                val tabBackgroundColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
-                }
-                Tab(
-                    selected = isSelected,
-                    onClick = { selectedTab = index },
-                    selectedContentColor = MaterialTheme.colorScheme.surface,
-                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .padding(horizontal = 4.dp, vertical = 4.dp)
-                        .background(color = tabBackgroundColor, shape = RoundedCornerShape(4.dp))
-                        .width(120.dp)
-                        .height(80.dp),
-                    text = {
-                        Column {
-                            Text(
-                                text = stringResource(R.string.title_trip_day, tripDay.day),
-                                maxLines = 1,
-                                fontWeight = FontWeight.Bold,
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Text(
-                                text = tripDay.date,
-                                maxLines = 1,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
-                    }
-                )
+            DaysTabs(uiState = uiState, selectedTab = selectedTab) {
+                selectedTab = it
             }
+            DayItinerary(
+                items = selectedItems
+            )
         }
-        DayItinerary(
-            items = selectedItems
-        )
+    }
+}
+
+@Composable
+fun DetailLayout(
+    isPortrait: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    if (isPortrait) {
+        Column {
+            content()
+        }
+    } else {
+        Row {
+            content()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DaysTabs(
+    uiState: DestinationDetailUiState.Success,
+    selectedTab: Int,
+    onTabSelected: (Int) -> Unit
+) {
+    SecondaryScrollableTabRow(
+        selectedTabIndex = selectedTab,
+        divider = {
+        },
+        indicator = {
+        }
+    ) {
+        uiState.calendar.forEachIndexed { index, tripDay ->
+            val isSelected = selectedTab == index
+            val tabBackgroundColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+            }
+            Tab(
+                selected = isSelected,
+                onClick = { onTabSelected(index) },
+                selectedContentColor = MaterialTheme.colorScheme.surface,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .padding(horizontal = 4.dp, vertical = 4.dp)
+                    .background(color = tabBackgroundColor, shape = RoundedCornerShape(4.dp))
+                    .width(120.dp)
+                    .height(80.dp),
+                text = {
+                    Column {
+                        Text(
+                            text = stringResource(R.string.title_trip_day, tripDay.day),
+                            maxLines = 1,
+                            fontWeight = FontWeight.Bold,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        Text(
+                            text = tripDay.date,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                    }
+                }
+            )
+        }
     }
 }
 
