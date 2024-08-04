@@ -265,7 +265,10 @@ fun DestinationMap(
     GoogleMap(
         modifier = modifier,
         cameraPositionState = cameraPositionState,
-        properties = MapProperties(isMyLocationEnabled = isMyLocationEnabled)
+        properties = MapProperties(isMyLocationEnabled = isMyLocationEnabled),
+        uiSettings = MapUiSettings(
+            myLocationButtonEnabled = false,
+        )
     ) {
         items.forEach { item ->
             Marker(
