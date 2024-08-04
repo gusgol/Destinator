@@ -50,11 +50,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import me.goldhardt.destinator.core.common.LocalMenuItemState
 import me.goldhardt.destinator.core.common.MenuItem
+import me.goldhardt.destinator.core.common.MenuItemsState
 import me.goldhardt.destinator.core.designsystem.Tokens
 import me.goldhardt.destinator.core.designsystem.components.ElevatedIcon
 import me.goldhardt.destinator.core.designsystem.components.ErrorScreen
@@ -89,7 +91,6 @@ fun DestinationDetail(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DestinationDetail(
     uiState: DestinationDetailUiState.Success
@@ -103,29 +104,8 @@ fun DestinationDetail(
     val mapSize: Float by animateFloatAsState(if (isFullscreen) 1f else 2.4f, label = "mapSize")
     val menu = LocalMenuItemState.current
 
-    LaunchedEffect(isFullscreen) {
-        menu.setMenuItems(DESTINATION_DETAIL_ROUTE, mutableListOf<MenuItem>().apply {
-            if (isFullscreen) {
-                add(
-                    MenuItem(
-                        "exit_fullscreen",
-                        R.string.action_exit_fullscreen,
-                        me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen_exit
-                    ) {
-                        isFullscreen = false
-                    })
-            } else {
-                add(
-                    MenuItem(
-                        "enter_fullscreen",
-                        R.string.action_enter_fullscreen,
-                        me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen
-                    ) {
-                        isFullscreen = true
-                    })
-            }
-        }
-        )
+    ConfigureMenuItems(menu, isFullscreen) {
+        isFullscreen = it
     }
 
     val mapModifier = if (isPortrait) {
@@ -155,6 +135,34 @@ fun DestinationDetail(
                 items = selectedItems
             )
         }
+    }
+}
+
+private val EXIT_FULLSCREEN_ICON
+    get() = me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen_exit
+
+private val ENTER_FULLSCREEN_ICON
+    get() = me.goldhardt.destinator.core.designsystem.R.drawable.ic_fullscreen
+
+@Composable
+private fun ConfigureMenuItems(
+    menu: MenuItemsState,
+    isFullscreen: Boolean,
+    setFullscreen: (Boolean) -> Unit,
+) {
+    LaunchedEffect(isFullscreen) {
+        val menuItems = mutableListOf(
+            if (isFullscreen) {
+                MenuItem("exit_fs", R.string.action_exit_fullscreen, EXIT_FULLSCREEN_ICON) {
+                    setFullscreen(false)
+                }
+            } else {
+                MenuItem("enter_fs", R.string.action_enter_fullscreen, ENTER_FULLSCREEN_ICON) {
+                    setFullscreen(true)
+                }
+            }
+        )
+        menu.setMenuItems(DESTINATION_DETAIL_ROUTE, menuItems)
     }
 }
 
