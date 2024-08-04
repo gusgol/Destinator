@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.feature.trips.destinations.create
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
@@ -91,7 +92,9 @@ fun SelectDestination(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            Spacer(modifier = Modifier.height(120.dp))
+            if (LocalConfiguration.current.isPortrait()) {
+                Spacer(modifier = Modifier.height(120.dp))
+            }
             CreateTripTitle(resourceId = R.string.title_trip_destination)
             TextField(
                 value = selectedCity,
@@ -143,11 +146,17 @@ fun SelectDates(
 
     val state = rememberDateRangePickerState()
 
+    val isPortrait = LocalConfiguration.current.isPortrait()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .paddingTopBarAndStatusBar()
+        modifier = if (isPortrait) {
+            Modifier
+                .fillMaxSize()
+                .paddingTopBarAndStatusBar()
+        } else {
+            Modifier.fillMaxSize()
+        }
     ) {
         DateRangePicker(
             state = state,
@@ -165,12 +174,24 @@ fun SelectDates(
             },
             showModeToggle = false,
             modifier = Modifier
-                .padding(16.dp)
+                .padding(
+                    if (isPortrait) {
+                        16.dp
+                    } else {
+                        0.dp
+                    }
+                )
                 .weight(1f)
         )
         NextStepButton(
             enabled = state.selectedStartDateMillis != null && state.selectedEndDateMillis != null,
-            modifier = Modifier.padding(36.dp)
+            modifier = Modifier.padding(
+                if (isPortrait) {
+                    36.dp
+                } else {
+                    0.dp
+                }
+            )
         ) {
             viewModel.setDates(
                 state.selectedStartDateMillis ?: 0,
@@ -200,7 +221,9 @@ fun SelectTripStyle(
             .fillMaxSize()
             .paddingTopBarAndStatusBar()
     ) {
-        Spacer(modifier = Modifier.height(120.dp))
+        if (LocalConfiguration.current.isPortrait()) {
+            Spacer(modifier = Modifier.height(120.dp))
+        }
         CreateTripTitle(resourceId = R.string.title_select_trip_style)
         FlowRow(
             horizontalArrangement = Arrangement.Center,
@@ -418,6 +441,10 @@ fun TripStyleChip(
         label = { Text(text = stringResource(id = tripStyle.displayName)) },
         modifier = modifier
     )
+}
+
+private fun Configuration.isPortrait(): Boolean {
+    return this.orientation == Configuration.ORIENTATION_PORTRAIT
 }
 
 enum class TripStyle(val displayName: Int) {
