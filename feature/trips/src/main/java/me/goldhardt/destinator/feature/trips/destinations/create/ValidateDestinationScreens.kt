@@ -1,10 +1,5 @@
 package me.goldhardt.destinator.feature.trips.destinations.create
 
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,19 +21,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
+import me.goldhardt.destinator.core.designsystem.components.ErrorScreen
+import me.goldhardt.destinator.core.designsystem.components.LoadingScreen
 import me.goldhardt.destinator.core.designsystem.paddingTopBarAndStatusBar
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
@@ -80,34 +72,7 @@ fun ValidateDestination(
 
 @Composable
 private fun Validating() {
-    val infiniteTransition = rememberInfiniteTransition(label = "text")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.05f,
-        animationSpec = infiniteRepeatable(tween(1000), RepeatMode.Reverse),
-        label = "scale"
-    )
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Searching...".uppercase(),
-            maxLines = 3,
-            style = MaterialTheme.typography.titleLarge.copy(textMotion = TextMotion.Animated),
-            textAlign = TextAlign.Center,
-            lineHeight = 20.sp,
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                    transformOrigin = TransformOrigin.Center
-                }
-                .align(Alignment.Center)
-        )
-    }
+    LoadingScreen(message = R.string.title_searching)
 }
 
 @Composable
@@ -168,6 +133,14 @@ private fun SuccessMultipleScreen(
     }
 }
 
+@Composable
+private fun Invalid(
+    errorMessage: Int,
+    onActionClicked: () -> Unit
+) {
+    ErrorScreen(errorMessage = errorMessage, onRetry = onActionClicked)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewSuccessMultipleScreen() {
@@ -183,29 +156,18 @@ fun PreviewSuccessMultipleScreen() {
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun Invalid(
-    errorMessage: Int,
-    onActionClicked: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(48.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(
-            text = stringResource(errorMessage),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onActionClicked) {
-            Text(
-                text = stringResource(R.string.action_try_again),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
+fun PreviewInvalid() {
+    DestinatorTheme {
+        Invalid(errorMessage = R.string.error_generic) {}
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewValidating() {
+    DestinatorTheme {
+        Validating()
     }
 }
