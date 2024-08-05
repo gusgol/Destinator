@@ -30,6 +30,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -66,6 +67,9 @@ import me.goldhardt.destinator.feature.trips.CREATE_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens
 import me.goldhardt.destinator.feature.trips.R
 import me.goldhardt.destinator.feature.trips.navigateToDestinationDetail
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneOffset
 
 
 @Composable
@@ -144,7 +148,15 @@ fun SelectDates(
     }
     val viewModel = hiltViewModel<CreateDestinationViewModel>(parentEntry)
 
-    val state = rememberDateRangePickerState()
+    val state = rememberDateRangePickerState(
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+                val today = LocalDate.now(ZoneOffset.UTC)
+                val dateToCheck = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
+                return dateToCheck.isAfter(today)
+            }
+        }
+    )
 
     val isPortrait = LocalConfiguration.current.isPortrait()
 
