@@ -151,7 +151,7 @@ fun SelectDates(
     val state = rememberDateRangePickerState(
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-                val today = LocalDate.now(ZoneOffset.UTC)
+                val today = LocalDate.now(ZoneOffset.UTC).minusDays(1)
                 val dateToCheck = Instant.ofEpochMilli(utcTimeMillis).atZone(ZoneOffset.UTC).toLocalDate()
                 return dateToCheck.isAfter(today)
             }
