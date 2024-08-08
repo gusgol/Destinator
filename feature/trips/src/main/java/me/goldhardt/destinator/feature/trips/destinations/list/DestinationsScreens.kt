@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DateRange
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -68,6 +69,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import me.goldhardt.destinator.core.designsystem.Tokens
+import me.goldhardt.destinator.core.designsystem.components.ErrorScreen
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
 import me.goldhardt.destinator.core.designsystem.components.StaticMapImage
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
@@ -121,12 +123,12 @@ fun DestinationsList(
 ) {
     when (uiState) {
         DestinationsUiState.Loading -> {
-            Text(
-                text = "Loading...",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
         }
 
         is DestinationsUiState.Success -> {
@@ -138,16 +140,10 @@ fun DestinationsList(
         }
 
         DestinationsUiState.Failed -> {
-            Text(
-                text = "Failed to load destinations",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
-            )
+            ErrorScreen(errorMessage = R.string.error_failed_load_trips)
         }
     }
 }
-
 @Composable
 fun DestinationsList(
     destinations: List<Destination>,

@@ -15,6 +15,8 @@
     <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>
     <string name="error_city_non_existent">We couldn\'t find any city with that name. Please, try again!</string>
     <string name="error_generic">Something went wrong, please try again!</string>
+    <string name="error_failed_load_trips">Failed to load your itineraries. Close and re-open the app</string>
+    <string name="error_failed_loading_destination">Failed to load this destination. Please, try again!</string>
     <string name="hint_enter_destination">London, Paris, any city… seriously!</string>
     <string name="title_empty_heading_1">Welcome to your</string>
     <string name="title_empty_heading_2">AI travel planner</string>
@@ -29,6 +31,8 @@
     <string name="title_visit_time">Visit time・ %1$s</string>
     <string name="title_multiple_destinations_found">We found multiple matches for your destination.</string>
     <string name="title_select_one_destination">Which one?</string>
+    <string name="title_searching">Searching…</string>
+    <string name="title_loading">Loading…</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>
@@ -46,7 +50,4 @@
     <string name="destination_status_current">Current</string>
     <string name="destination_status_upcoming">Upcoming</string>
     <string name="destination_status_completed">Completed</string>
-    <string name="title_searching">Searching...</string>
-    <string name="error_failed_loading_destination">Failed to load this destination. Please, try again!</string>
-    <string name="title_loading">Loading...</string>
 </resources>
