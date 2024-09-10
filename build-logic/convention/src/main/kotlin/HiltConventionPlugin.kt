@@ -15,11 +15,6 @@ class HiltConventionPlugin : Plugin<Project> {
                 add("ksp", libs.findLibrary("hilt.compiler").get())
                 add("kspTest", libs.findLibrary("hilt.compiler").get())
                 add("implementation", libs.findLibrary("hilt.android").get())
-
-                /**
-                 * Adds the Hilt Navigation Compose library to the project, e.g.: hiltViewModel()
-                 * TODO Check if this is the best place to add this (instead of per-module)
-                 */
                 add("implementation", libs.findLibrary("androidx-hilt-navigation-compose").get())
             }
         }

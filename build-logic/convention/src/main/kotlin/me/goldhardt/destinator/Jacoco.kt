@@ -23,13 +23,10 @@ private val coverageExclusions = listOf(
     "**/R\$*.class",
     "**/BuildConfig.*",
     "**/Manifest*.*",
-
-    // Exclude androidx packages
     "**/androidx/**/*.*",
-
-    // TODO Uncomment when Hilt is added
-    //    "**/*_Hilt*.class",
-    //    "**/Hilt_*.class",
+    // Hilt
+    "**/*_Hilt*.class",
+    "**/Hilt_*.class",
 )
 
 private fun String.capitalize() = replaceFirstChar {

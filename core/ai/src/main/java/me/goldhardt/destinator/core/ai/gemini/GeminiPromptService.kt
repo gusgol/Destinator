@@ -3,7 +3,6 @@ package me.goldhardt.destinator.core.ai.gemini
 import me.goldhardt.destinator.core.ai.Prompt
 import me.goldhardt.destinator.core.ai.PromptService
 import com.google.ai.client.generativeai.GenerativeModel
-import com.google.ai.client.generativeai.type.Content
 import com.google.ai.client.generativeai.type.content
 import com.google.ai.client.generativeai.type.generationConfig
 import me.goldhardt.destinator.core.ai.BuildConfig

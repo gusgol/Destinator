@@ -13,7 +13,7 @@ const val START_DESTINATION = DESTINATIONS_ROUTE
 fun DestinatorNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    startDestination: String = START_DESTINATION, //TODO change this to the actual start destination
+    startDestination: String = START_DESTINATION,
 ) {
     NavHost(
         navController = navController,
