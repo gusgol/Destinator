@@ -1,5 +1,7 @@
 [versions]
 agp = "8.5.0"
+androidDesugarJdkLibs = "2.0.4"
+androidTools = "31.5.1"
 kotlin = "2.0.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -17,6 +19,7 @@ gemini = "0.7.0"
 retrofit = "2.11.0"
 kotlinSerialization = "1.7.1"
 hilt = "2.51.1"
+jacoco = "0.8.7"
 kotlinSerializationPlugin = "2.0.0"
 ksp = "2.0.0-1.0.21"
 hiltNavigationCompose = "1.2.0"
@@ -29,6 +32,7 @@ accompanist = "0.34.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+android-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -65,6 +69,12 @@ coil = { group = "io.coil-kt", name = "coil", version = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
+# Build-logic dependencies
+android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+android-tools-common = { group = "com.android.tools", name = "common", version.ref = "androidTools" }
+compose-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
+kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -73,3 +83,13 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerializationPlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+# Project plugins
+destinator-android-application = { id = "destinator.android.application", version = "unspecified" }
+destinator-android-application-compose = { id = "destinator.android.application.compose", version = "unspecified" }
+destinator-android-application-jacoco = { id = "destinator.android.application.jacoco", version = "unspecified" }
+destinator-android-application-flavors = { id = "destinator.android.application.flavors", version = "unspecified" }
+destinator-android-library = { id = "destinator.android.library", version = "unspecified" }
+destinator-android-library-compose = { id = "destinator.android.library.compose", version = "unspecified" }
+destinator-android-library-jacoco = { id = "destinator.android.library.jacoco", version = "unspecified" }
+destinator-hilt = { id = "destinator.hilt", version = "unspecified" }
