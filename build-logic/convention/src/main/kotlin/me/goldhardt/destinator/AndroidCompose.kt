@@ -22,13 +22,6 @@ internal fun Project.configureAndroidCompose(
             add("implementation", libs.findLibrary("androidx-ui-graphics").get())
             add("androidTestImplementation", platform(bom))
             add("debugImplementation", libs.findLibrary("androidx-ui-tooling").get())
-
-            /**
-             * TODO confirm material 3 lib will be needed, or it will rely on foundation libs only:
-             * https://developer.android.com/develop/ui/compose/setup#setup-compose
-             *
-             *  add("implementation", libs.findLibrary("androidx-ui").get())
-             */
             add("implementation", libs.findLibrary("androidx-material3").get())
         }
 
