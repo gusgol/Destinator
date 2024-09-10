@@ -61,6 +61,10 @@ gradlePlugin {
             id = "destinator.android.library.jacoco"
             implementationClass = "AndroidLibraryJacocoConventionPlugin"
         }
+        register("androidFeature") {
+            id = "destinator.android.feature"
+            implementationClass = "AndroidFeatureConventionPlugin"
+        }
         register("hilt") {
             id = "destinator.hilt"
             implementationClass = "HiltConventionPlugin"

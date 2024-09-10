@@ -1,73 +1,72 @@
 [versions]
+accompanist = "0.34.0"
+activityCompose = "1.9.0"
 agp = "8.5.0"
 androidDesugarJdkLibs = "2.0.4"
 androidTools = "31.5.1"
-kotlin = "2.0.0"
-coreKtx = "1.13.1"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.3"
-activityCompose = "1.9.0"
-composeBom = "2024.06.00"
-composeAnimation = "1.7.0-beta06"
 appcompat = "1.7.0"
-material = "1.12.0"
-uiTextGoogleFonts = "1.6.8"
-navigation = "2.7.7"
+composeAnimation = "1.7.0-beta06"
+composeBom = "2024.06.00"
+coreKtx = "1.13.1"
+coil = "2.7.0"
+espressoCore = "3.6.1"
 gemini = "0.7.0"
-retrofit = "2.11.0"
-kotlinSerialization = "1.7.1"
-hilt = "2.51.1"
-jacoco = "0.8.7"
-kotlinSerializationPlugin = "2.0.0"
-ksp = "2.0.0-1.0.21"
-hiltNavigationCompose = "1.2.0"
-room = "2.6.1"
 googleMaps = "6.1.0"
 googlePlaces = "3.5.0"
-coil = "2.7.0"
-accompanist = "0.34.0"
-
+hilt = "2.51.1"
+hiltNavigationCompose = "1.2.0"
+jacoco = "0.8.7"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+kotlin = "2.0.0"
+kotlinSerialization = "1.7.1"
+kotlinSerializationPlugin = "2.0.0"
+ksp = "2.0.0-1.0.21"
+lifecycleRuntimeKtx = "2.8.3"
+material = "1.12.0"
+navigation = "2.7.7"
+retrofit = "2.11.0"
+room = "2.6.1"
+uiTextGoogleFonts = "1.6.8"
 
 [libraries]
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 android-desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
-androidx-lifecycle-viewModel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-runtime-testing = { group = "androidx.lifecycle", name = "lifecycle-runtime-testing", version.ref = "lifecycleRuntimeKtx" }
+androidx-lifecycle-viewModel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
+androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-gemini = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini"}
-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
-kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+coil = { group = "io.coil-kt", name = "coil", version = "coil" }
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+gemini = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" }
+google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps" }
+google-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "googlePlaces" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
-google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps" }
-google-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "googlePlaces" }
-coil = { group = "io.coil-kt", name = "coil", version = "coil" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-accompanist = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 # Build-logic dependencies
 android-gradle-plugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
@@ -77,18 +76,19 @@ kotlin-gradle-plugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-p
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerializationPlugin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 # Project plugins
 destinator-android-application = { id = "destinator.android.application", version = "unspecified" }
 destinator-android-application-compose = { id = "destinator.android.application.compose", version = "unspecified" }
-destinator-android-application-jacoco = { id = "destinator.android.application.jacoco", version = "unspecified" }
 destinator-android-application-flavors = { id = "destinator.android.application.flavors", version = "unspecified" }
+destinator-android-application-jacoco = { id = "destinator.android.application.jacoco", version = "unspecified" }
+destinator-android-feature = { id = "destinator.android.feature", version = "unspecified" }
 destinator-android-library = { id = "destinator.android.library", version = "unspecified" }
 destinator-android-library-compose = { id = "destinator.android.library.compose", version = "unspecified" }
 destinator-android-library-jacoco = { id = "destinator.android.library.jacoco", version = "unspecified" }

@@ -2,6 +2,7 @@ import com.android.build.gradle.LibraryExtension
 import me.goldhardt.destinator.DefaultConfig
 import me.goldhardt.destinator.configureFlavors
 import me.goldhardt.destinator.configureKotlinAndroid
+import me.goldhardt.destinator.configureProguard
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -23,20 +24,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 buildFeatures.buildConfig = true
                 testOptions.animationsDisabled = true
                 configureFlavors(this)
-
-                /**
-                 * This assumes Proguard files will be present in the module.
-                 */
-                defaultConfig.consumerProguardFiles("consumer-rules.pro")
-                buildTypes {
-                    release {
-                        isMinifyEnabled = false
-                        proguardFiles(
-                            getDefaultProguardFile("proguard-android-optimize.txt"),
-                            "proguard-rules.pro"
-                        )
-                    }
-                }
+                configureProguard(this)
             }
             dependencies {
                 add("androidTestImplementation", kotlin("test"))
