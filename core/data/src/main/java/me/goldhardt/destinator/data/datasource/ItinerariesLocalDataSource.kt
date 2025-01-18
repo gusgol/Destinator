@@ -24,6 +24,38 @@ class ItinerariesLocalDataSource @Inject constructor(
         return destinationId
     }
 
+    override suspend fun addPlaceToItinerary(
+        destinationId: Long,
+        placeName: String,
+        placeDescription: String,
+        latitude: Double,
+        longitude: Double,
+        visitTimeMin: Int,
+        tripDay: Int
+    ): Long {
+        val place = placesDataSource.getPlace(placeName, latitude, longitude)
+        val itineraryItem = ItineraryItemEntity(
+            destinationId = destinationId,
+            order = 0, // You may want to set the correct order
+            date = "", // You may want to set the correct date
+            name = placeName,
+            description = placeDescription,
+            latitude = place?.latitude ?: latitude,
+            longitude = place?.longitude ?: longitude,
+            visitTimeMin = visitTimeMin,
+            tripDay = tripDay,
+            iconUrl = place?.iconUrl,
+            metadataSourceId = place?.sourceId
+        )
+        val itineraryItemId = itineraryDao.insertItinerary(itineraryItem)
+        insertPhoto(itineraryItemId, place?.photosUrls.orEmpty())
+        return itineraryItemId
+    }
+
+    override suspend fun deletePlaceFromItinerary(placeId: Long) {
+        itineraryDao.deleteItineraryItem(placeId)
+    }
+
     private suspend fun insertDestination(destinationItinerary: AIGenerateItineraryResponse): Long {
         val from = destinationItinerary.itinerary.minOf { it.date }
         val to = destinationItinerary.itinerary.maxOf { it.date }
