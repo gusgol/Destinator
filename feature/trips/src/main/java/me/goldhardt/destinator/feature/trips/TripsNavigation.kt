@@ -21,6 +21,7 @@ import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestinati
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectTripStyle
 import me.goldhardt.destinator.feature.trips.destinations.create.ValidateDestination
 import me.goldhardt.destinator.feature.trips.destinations.detail.DestinationDetail
+import me.goldhardt.destinator.feature.trips.destinations.edit.EditDestinationScreens
 import me.goldhardt.destinator.feature.trips.destinations.list.DestinationsRoute
 
 /**
@@ -34,7 +35,8 @@ const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
 const val DESTINATION_ID = "destinationId"
 const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
 const val DESTINATION_DETAIL_ROUTE = "$DESTINATION_DETAIL/{$DESTINATION_ID}?$TITLE={$TITLE}"
-
+const val DESTINATION_EDIT = "$DESTINATIONS_ROUTE/edit"
+const val DESTINATION_EDIT_ROUTE = "$DESTINATION_EDIT/{$DESTINATION_ID}?$TITLE={$TITLE}"
 
 /**
  * Nested navigation for create trip
@@ -93,7 +95,17 @@ fun NavGraphBuilder.tripsScreens(
             }
         )
     ) {
-        DestinationDetail()
+        DestinationDetail { destination ->
+            navController.navigateToDestinationEdit(destination.id, destination.city)
+        }
+    }
+    composable(
+        route = DESTINATION_EDIT_ROUTE,
+        arguments = listOf(
+            navArgument(DESTINATION_ID) { type = NavType.LongType },
+        )
+    ) {
+        EditDestinationScreens()
     }
 }
 
@@ -109,4 +121,15 @@ fun NavController.navigateToDestinationDetail(
     navigate("$DESTINATION_DETAIL/$destinationId?$TITLE=$city") {
         popUpTo(graph.findStartDestination().id)
     }
+}
+
+/**
+ * Navigate to the destination edit screen.
+ * @param destinationId The id of the destination to edit.
+ */
+fun NavController.navigateToDestinationEdit(
+    destinationId: Long,
+    city: String? = null
+) {
+    navigate("$DESTINATION_EDIT/$destinationId?$TITLE=$city")
 }

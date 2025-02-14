@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
 import androidx.compose.material3.Tab
@@ -33,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -65,6 +70,7 @@ import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
 import me.goldhardt.destinator.core.designsystem.components.SubtleVerticalDivider
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
+import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL_ROUTE
 import me.goldhardt.destinator.feature.trips.R
@@ -73,10 +79,11 @@ import java.time.LocalTime
 
 @Composable
 fun DestinationDetail(
-    destinationDetailViewModel: DestinationDetailViewModel = hiltViewModel()
+    destinationDetailViewModel: DestinationDetailViewModel = hiltViewModel(),
+    onEditClick: (Destination) -> Unit
 ) {
     val uiState by destinationDetailViewModel.uiState.collectAsStateWithLifecycle()
-    when (uiState) {
+    when (val state = uiState) {
         DestinationDetailUiState.Failed -> {
             ErrorScreen(errorMessage = R.string.error_failed_loading_destination)
         }
@@ -86,14 +93,18 @@ fun DestinationDetail(
         }
 
         is DestinationDetailUiState.Success -> {
-            DestinationDetail(uiState = uiState as DestinationDetailUiState.Success)
+            DestinationDetail(
+                uiState = state,
+                onEditClick = onEditClick
+            )
         }
     }
 }
 
 @Composable
 fun DestinationDetail(
-    uiState: DestinationDetailUiState.Success
+    uiState: DestinationDetailUiState.Success,
+    onEditClick: (Destination) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
     val selectedItems = uiState.destination.itinerary.filter {
@@ -128,9 +139,14 @@ fun DestinationDetail(
             if (!isPortrait) {
                 Spacer(modifier = Modifier.height(Tokens.TopBar.height))
             }
-            DaysTabs(uiState = uiState, selectedTab = selectedTab) {
-                selectedTab = it
-            }
+            ItineraryTabs(
+                uiState = uiState,
+                selectedTab = selectedTab,
+                onTabSelected = {
+                    selectedTab = it
+                },
+                onEditClick = onEditClick
+            )
             DayItinerary(
                 items = selectedItems
             )
@@ -184,10 +200,11 @@ fun DetailLayout(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DaysTabs(
+fun ItineraryTabs(
     uiState: DestinationDetailUiState.Success,
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
+    onEditClick: (Destination) -> Unit
 ) {
     SecondaryScrollableTabRow(
         selectedTabIndex = selectedTab,
@@ -214,24 +231,78 @@ fun DaysTabs(
                     .width(120.dp)
                     .height(80.dp),
                 text = {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.title_trip_day, tripDay.day),
-                            maxLines = 1,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = tripDay.date,
-                            maxLines = 1,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                    }
+                    ItineraryDayTab(tripDay)
                 }
             )
         }
+        Tab(
+            selected = false,
+            modifier = Modifier
+                .padding(horizontal = 4.dp, vertical = 4.dp)
+                .clip(shape = RoundedCornerShape(4.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                )
+                .width(80.dp)
+                .height(80.dp),
+            onClick = {
+                onEditClick(uiState.destination)
+            },
+            text = {
+                EditTab()
+            }
+        )
     }
 }
+
+@Composable
+private fun ItineraryTab(
+    title: String,
+    subtitle: String
+) {
+    Column {
+        Text(
+            text = title,
+            maxLines = 1,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = subtitle,
+            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
+
+@Composable
+private fun ItineraryDayTab(
+    tripDay: TripDay
+) {
+    ItineraryTab(
+        stringResource(R.string.title_trip_day, tripDay.day),
+        tripDay.date
+    )
+}
+
+@Composable
+private fun EditTab() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.Edit,
+            contentDescription = stringResource(R.string.cd_edit_destination_and_itinerary),
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = stringResource(R.string.action_edit),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -387,7 +458,12 @@ fun ItineraryItem(
     }
 }
 
-private fun ItineraryItem.getVisitTime(): String {
+/**
+ * Get the visit time in a human-readable format.
+ *
+ * TODO move this to a different file
+ */
+fun ItineraryItem.getVisitTime(): String {
     val duration = LocalTime.MIN.plus(
         Duration.ofMinutes(visitTimeMin.toLong())
     )
