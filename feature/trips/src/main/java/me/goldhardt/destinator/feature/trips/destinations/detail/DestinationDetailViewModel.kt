@@ -8,9 +8,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.repository.DestinationsRepository
+import me.goldhardt.destinator.data.datasource.ItinerariesDataSource
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
 import javax.inject.Inject
 
@@ -31,7 +33,8 @@ data class TripDay(
 @HiltViewModel
 class DestinationDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    destinationsRepository: DestinationsRepository
+    destinationsRepository: DestinationsRepository,
+    private val itinerariesDataSource: ItinerariesDataSource
 ) : ViewModel() {
 
     private val destinationId: Long = checkNotNull(savedStateHandle[DESTINATION_ID])
@@ -65,5 +68,32 @@ class DestinationDetailViewModel @Inject constructor(
                 )
             }
             .distinct()
+    }
+
+    fun addPlaceToItinerary(
+        placeName: String,
+        placeDescription: String,
+        latitude: Double,
+        longitude: Double,
+        visitTimeMin: Int,
+        tripDay: Int
+    ) {
+        viewModelScope.launch {
+            itinerariesDataSource.addPlaceToItinerary(
+                destinationId = destinationId,
+                placeName = placeName,
+                placeDescription = placeDescription,
+                latitude = latitude,
+                longitude = longitude,
+                visitTimeMin = visitTimeMin,
+                tripDay = tripDay
+            )
+        }
+    }
+
+    fun deletePlaceFromItinerary(placeId: Long) {
+        viewModelScope.launch {
+            itinerariesDataSource.deletePlaceFromItinerary(placeId)
+        }
     }
 }
