@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -59,7 +60,11 @@ fun ValidateDestination(
 
     when (val state = validationState) {
         is DestinationValidationState.Loading -> Validating()
-        is DestinationValidationState.Success -> navigateToSelectDates()
+        is DestinationValidationState.Success -> {
+            LaunchedEffect(Unit) {
+                navigateToSelectDates()
+            }
+        }
         is DestinationValidationState.SuccessMultiple -> SuccessMultipleScreen(state.options) {
             viewModel.setCity(it)
             navigateToSelectDates()
