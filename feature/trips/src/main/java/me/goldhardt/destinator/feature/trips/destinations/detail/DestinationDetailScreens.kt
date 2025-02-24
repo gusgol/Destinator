@@ -445,7 +445,7 @@ fun ItineraryItem(
             )
             if (item.photos.isNotEmpty()) {
                 PlacePhotos(
-                    imageUrls = item.photos,
+                    photosReferences = item.photos,
                     maxWidthPx = 200,
                     modifier = Modifier.padding(top = 16.dp)
                 )

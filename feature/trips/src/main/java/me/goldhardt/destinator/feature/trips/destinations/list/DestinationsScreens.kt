@@ -331,7 +331,7 @@ fun DestinationRowItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PlacePhoto(
-                imageUrl = destination.thumbnail,
+                photoReference = destination.thumbnail,
                 maxWidthPx = 600,
                 modifier = if (destination.status == DestinationStatus.COMPLETED) {
                     Modifier.drawWithContent {
@@ -378,7 +378,7 @@ fun DestinationListItem(
     ) {
         Column {
             PlacePhoto(
-                imageUrl = destination.thumbnail,
+                photoReference = destination.thumbnail,
                 maxWidthPx = 600,
                 modifier = if (destination.status == DestinationStatus.COMPLETED) {
                     Modifier.drawWithContent {

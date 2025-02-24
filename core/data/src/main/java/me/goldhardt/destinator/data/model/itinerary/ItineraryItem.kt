@@ -37,5 +37,5 @@ fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
         tripDay = itineraryItem.tripDay,
         iconUrl = itineraryItem.iconUrl,
         metadataSourceId = itineraryItem.metadataSourceId,
-        photos = photos.map { it.url }
+        photos = photos.map { it.reference }
     )

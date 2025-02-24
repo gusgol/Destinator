@@ -39,9 +39,12 @@ import coil.compose.AsyncImage
 import me.goldhardt.destinator.core.designsystem.BuildConfig
 import me.goldhardt.destinator.core.designsystem.R
 
+private const val PHOTO_BASE_URL =
+    "https://maps.googleapis.com/maps/api/place/photo?photoreference=%s"
+
 @Composable
 fun PlacePhotos(
-    imageUrls: List<String>,
+    photosReferences: List<String>,
     modifier: Modifier = Modifier,
     maxWidthPx: Int? = 400,
     maxHeightPx: Int? = null,
@@ -54,9 +57,9 @@ fun PlacePhotos(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            imageUrls.forEach {
+            photosReferences.forEach {
                 PlacePhoto(
-                    imageUrl = it,
+                    photoReference = it,
                     maxWidthPx = maxWidthPx,
                     maxHeightPx = maxHeightPx,
                     contentDescription = null, // TODO fix accessibility
@@ -86,7 +89,7 @@ fun PlacePhotos(
             ) {
                 CircularProgressIndicator()
                 PlacePhoto(
-                    imageUrl = fullScreenPhoto,
+                    photoReference = fullScreenPhoto,
                     maxWidthPx = 1024,
                     contentScale = ContentScale.Fit,
                     placeholder = ColorPainter(Color.Transparent),
@@ -97,7 +100,9 @@ fun PlacePhotos(
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = MaterialTheme.colorScheme.surface,
                     ),
-                    modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(16.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -111,7 +116,7 @@ fun PlacePhotos(
 
 @Composable
 fun PlacePhoto(
-    imageUrl: String,
+    photoReference: String,
     modifier: Modifier = Modifier,
     maxWidthPx: Int? = 400,
     maxHeightPx: Int? = null,
@@ -120,16 +125,16 @@ fun PlacePhoto(
     placeholder: Painter? = ColorPainter(MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)),
     onPhotoClick: ((String) -> Unit)? = null,
 ) {
-    var transformedUrl = "$imageUrl?"
+    var transformedUrl = PHOTO_BASE_URL.format(photoReference)
     if (maxWidthPx != null) {
-        transformedUrl += "&maxWidthPx=$maxWidthPx"
+        transformedUrl += "&maxwidth=$maxWidthPx"
     }
     if (maxHeightPx != null) {
-        transformedUrl += "&maxHeight`Px=$maxHeightPx"
+        transformedUrl += "&maxheight=$maxHeightPx"
     }
     transformedUrl += "&key=${BuildConfig.PLACES_API_KEY}"
     val clickableModifier = if (onPhotoClick != null) {
-        modifier.clickable { onPhotoClick(imageUrl) }
+        modifier.clickable { onPhotoClick(photoReference) }
     } else {
         modifier
     }

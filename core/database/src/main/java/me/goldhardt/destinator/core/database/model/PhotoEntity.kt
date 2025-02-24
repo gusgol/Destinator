@@ -18,5 +18,6 @@ import androidx.room.PrimaryKey
 data class PhotoEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "parent_id") val parentId: Long,
-    @ColumnInfo(name = "url") val url: String,
+    @ColumnInfo(name = "reference") val reference: String,
+    @ColumnInfo(name = "source") val source: String? = null,
 )

@@ -22,7 +22,6 @@ class GooglePlacesDataSource @Inject constructor(
 
     companion object {
         private const val SEARCH_RADIUS_M = 25_000.0
-        private const val PHOTO_BASE_URL = "https://places.googleapis.com/v1/%s/media"
         private const val MAX_PHOTOS = 5
     }
 
@@ -63,8 +62,8 @@ class GooglePlacesDataSource @Inject constructor(
                             iconUrl = place.iconUrl,
                             latitude = place.latLng?.latitude,
                             longitude = place.latLng?.longitude,
-                            photosUrls = photos?.map { photoMetadata ->
-                                PHOTO_BASE_URL.format(photoMetadata.zza())
+                            photosReferences = photos?.map { photoMetadata ->
+                                photoMetadata.zza()
                             } ?: listOf()
                         )
                     },

@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.core.ai)
     implementation(projects.core.database)
     implementation(projects.core.places)
+    implementation(projects.core.common)
 
     implementation(libs.kotlinx.serialization)
     testImplementation(libs.junit)

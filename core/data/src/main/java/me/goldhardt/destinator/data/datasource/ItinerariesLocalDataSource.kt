@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.data.datasource
 
+import me.goldhardt.destinator.core.common.PhotoSource
 import me.goldhardt.destinator.core.database.dao.DestinationDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.dao.PhotoDao
@@ -42,7 +43,7 @@ class ItinerariesLocalDataSource @Inject constructor(
                 to = to,
                 longitude = destinationItinerary.longitude,
                 latitude = destinationItinerary.latitude,
-                thumbnail = destinationPlace?.photosUrls?.random().orEmpty()
+                thumbnail = destinationPlace?.photosReferences?.random().orEmpty()
             )
         )
     }
@@ -67,19 +68,20 @@ class ItinerariesLocalDataSource @Inject constructor(
                 metadataSourceId = place?.sourceId
             ).also {
                 val itineraryItemId = itineraryDao.insertItinerary(itineraryItem = it)
-                insertPhoto(itineraryItemId, place?.photosUrls.orEmpty())
+                insertPhoto(itineraryItemId, place?.photosReferences.orEmpty())
             }
         }
     }
 
     private suspend fun insertPhoto(
         itineraryItemId: Long,
-        photosUrls: List<String>
+        references: List<String>
     ) {
-        photosUrls.map { url ->
+        references.map { ref ->
             PhotoEntity(
                 parentId = itineraryItemId,
-                url = url
+                reference = ref,
+                source = PhotoSource.GOOGLE_PLACES
             )
         }.let { photos ->
             photoDao.insertPhotos(photos)
