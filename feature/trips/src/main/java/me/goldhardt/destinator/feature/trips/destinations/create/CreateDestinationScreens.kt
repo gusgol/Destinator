@@ -298,7 +298,9 @@ fun GeneratingItinerary(
             GenerateItineraryFailed(viewModel)
         }
         is CreateDestinationUiState.Generated -> {
-            navController.navigateToDestinationDetail(state.destinationId , state.city )
+            LaunchedEffect(Unit) {
+                navController.navigateToDestinationDetail(state.destinationId, state.city)
+            }
         }
         is CreateDestinationUiState.Processing -> {
             ProcessingItineraryRequest()
