@@ -6,14 +6,14 @@ import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.goldhardt.destinator.core.database.model.DestinationEntity
-import me.goldhardt.destinator.core.database.model.DestinationWithItinerary
+import me.goldhardt.destinator.core.database.model.DestinationWithItineraryDays
 
 @Dao
 interface DestinationDao {
 
     @Transaction
     @Query("SELECT * FROM destinations")
-    fun getDestinationsWithItinerary(): Flow<List<DestinationWithItinerary>>
+    fun getDestinationsWithItinerary(): Flow<List<DestinationWithItineraryDays>>
 
     @Query(
         value = """
@@ -21,7 +21,7 @@ interface DestinationDao {
         WHERE id = :destinationId
     """,
     )
-    fun getDestination(destinationId: Long): Flow<DestinationWithItinerary?>
+    fun getDestination(destinationId: Long): Flow<DestinationWithItineraryDays?>
 
     @Insert
     suspend fun insertDestination(destination: DestinationEntity): Long

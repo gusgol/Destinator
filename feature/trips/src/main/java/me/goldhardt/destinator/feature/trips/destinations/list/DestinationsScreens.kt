@@ -486,7 +486,7 @@ private fun DestinationDetail(
             Text(
                 text = stringResource(
                     R.string.title_s_places,
-                    destination.itinerary.count()
+                    destination.itineraryCount
                 ),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End,

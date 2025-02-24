@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
+import me.goldhardt.destinator.data.extensions.formatDate
+import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.R
 import me.goldhardt.destinator.feature.trips.destinations.detail.getVisitTime
@@ -79,7 +81,7 @@ internal fun EditDestinationScreen(state: EditDestinationUiState.Success) {
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            state.dayItineraries.forEach {
+            state.itineraryDays.forEach {
                 item {
                     EditDestinationsHeader(it)
                 }
@@ -92,7 +94,7 @@ internal fun EditDestinationScreen(state: EditDestinationUiState.Success) {
 }
 
 @Composable
-internal fun EditDestinationsHeader(dayItinerary: DayItinerary) {
+internal fun EditDestinationsHeader(itineraryDay: ItineraryDay) {
     val color = MaterialTheme.colorScheme.onBackground
     val circleSize = 12.dp
     Row(
@@ -121,13 +123,13 @@ internal fun EditDestinationsHeader(dayItinerary: DayItinerary) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Day ${dayItinerary.day}",
+                text = "Day ${itineraryDay.day}",
                 style = MaterialTheme.typography.titleMedium,
                 color = color,
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = dayItinerary.date,
+                text = formatDate(itineraryDay.date),
                 style = MaterialTheme.typography.bodyMedium,
                 color = color,
             )
@@ -206,10 +208,10 @@ fun EditDestinationScreenPreview() {
     DestinatorTheme {
         EditDestinationScreen(
             state = EditDestinationUiState.Success(
-                dayItineraries = listOf(
-                    DayItinerary(
-                        day = 1,
-                        date = "26 Mar",
+                itineraryDays = listOf(
+                    ItineraryDay(
+                        day = 0,
+                        date = "2023-04-02",
                         items = listOf(
                             ItineraryItem(
                                 name = "Sample Destination",
@@ -217,10 +219,10 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-01",
+                                date = "2023-04-02",
                                 metadataSourceId = "123",
                                 order = 1,
-                                tripDay = 1,
+                                tripDay = 2,
                                 visitTimeMin = 60
                             ),
                             ItineraryItem(
@@ -229,18 +231,30 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-01",
+                                date = "2023-04-02",
                                 metadataSourceId = "123",
                                 order = 1,
-                                tripDay = 1,
+                                tripDay = 2,
                                 visitTimeMin = 60
                             )
                         )
                     ),
-                    DayItinerary(
-                        day = 2,
-                        date = "26 Mar",
+                    ItineraryDay(
+                        day = 1,
+                        date = "2023-04-03",
                         items = listOf(
+                            ItineraryItem(
+                                name = "Sample Destination",
+                                description = "This is a sample description for a destination.",
+                                iconUrl = "https://example.com/icon.png",
+                                latitude = 0.0,
+                                longitude = 0.0,
+                                date = "2023-04-02",
+                                metadataSourceId = "123",
+                                order = 1,
+                                tripDay = 2,
+                                visitTimeMin = 60
+                            ),
                             ItineraryItem(
                                 name = "Sample Destination",
                                 description = "This is a sample description for a destination.",

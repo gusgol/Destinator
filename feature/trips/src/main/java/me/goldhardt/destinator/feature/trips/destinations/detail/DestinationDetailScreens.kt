@@ -70,7 +70,9 @@ import me.goldhardt.destinator.core.designsystem.components.PlacePhotos
 import me.goldhardt.destinator.core.designsystem.components.SubtleHorizontalDivider
 import me.goldhardt.destinator.core.designsystem.components.SubtleVerticalDivider
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
+import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.data.model.destination.Destination
+import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL_ROUTE
 import me.goldhardt.destinator.feature.trips.R
@@ -107,9 +109,7 @@ fun DestinationDetail(
     onEditClick: (Destination) -> Unit
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    val selectedItems = uiState.destination.itinerary.filter {
-        it.tripDay == uiState.calendar[selectedTab].day
-    }
+    val selectedItems = uiState.destination.itineraryDays[selectedTab].items
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isFullscreen by rememberSaveable { mutableStateOf(false) }
     val mapSize: Float by animateFloatAsState(if (isFullscreen) 1f else 2.4f, label = "mapSize")
@@ -213,7 +213,7 @@ fun ItineraryTabs(
         indicator = {
         }
     ) {
-        uiState.calendar.forEachIndexed { index, tripDay ->
+        uiState.destination.itineraryDays.forEachIndexed { index, tripDay ->
             val isSelected = selectedTab == index
             val tabBackgroundColor = if (isSelected) {
                 MaterialTheme.colorScheme.primary
@@ -277,11 +277,11 @@ private fun ItineraryTab(
 
 @Composable
 private fun ItineraryDayTab(
-    tripDay: TripDay
+    itineraryDay: ItineraryDay
 ) {
     ItineraryTab(
-        stringResource(R.string.title_trip_day, tripDay.day),
-        tripDay.date
+        stringResource(R.string.title_trip_day, itineraryDay.day),
+        formatDate(itineraryDay.date)
     )
 }
 

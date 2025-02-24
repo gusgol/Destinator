@@ -2,6 +2,7 @@ package me.goldhardt.destinator.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import me.goldhardt.destinator.core.database.model.ItineraryDayEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 
 @Dao
@@ -16,4 +17,9 @@ interface ItineraryDao {
     suspend fun insertItinerary(
         itineraryItems: List<ItineraryItemEntity>
     ): List<Long>
+
+    @Insert
+    suspend fun insertItineraryDay(
+        itineraryDay: ItineraryDayEntity
+    ): Long
 }

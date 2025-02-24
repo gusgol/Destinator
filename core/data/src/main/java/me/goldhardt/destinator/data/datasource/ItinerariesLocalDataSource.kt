@@ -5,6 +5,7 @@ import me.goldhardt.destinator.core.database.dao.DestinationDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.dao.PhotoDao
 import me.goldhardt.destinator.core.database.model.DestinationEntity
+import me.goldhardt.destinator.core.database.model.ItineraryDayEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 import me.goldhardt.destinator.core.database.model.PhotoEntity
 import me.goldhardt.destinator.core.places.PlacesDataSource
@@ -21,7 +22,7 @@ class ItinerariesLocalDataSource @Inject constructor(
 
     override suspend fun createItinerary(destinationItinerary: AIGenerateItineraryResponse): Long {
         val destinationId = insertDestination(destinationItinerary)
-        insertItineraryItems(destinationId, destinationItinerary.itinerary)
+        insertItineraryDays(destinationId, destinationItinerary.itinerary)
         return destinationId
     }
 
@@ -48,14 +49,31 @@ class ItinerariesLocalDataSource @Inject constructor(
         )
     }
 
+    private suspend fun insertItineraryDays(
+        destinationId: Long,
+        itineraryItems: List<AICreatedItineraryItem>
+    ) {
+        itineraryItems.groupBy { it.tripDay }.map { (day, items) ->
+            val itineraryDay = ItineraryDayEntity(
+                destinationId = destinationId,
+                date = items.first().date,
+                day = day
+            )
+            val itineraryDayId = itineraryDao.insertItineraryDay(itineraryDay)
+            insertItineraryItems(destinationId, itineraryDayId, items)
+        }
+    }
+
     private suspend fun insertItineraryItems(
         destinationId: Long,
+        itineraryDayId: Long,
         itineraryItems: List<AICreatedItineraryItem>
     ) {
         itineraryItems.mapIndexed { index, item ->
             val place = placesDataSource.getPlace(item.name, item.latitude, item.longitude)
             ItineraryItemEntity(
                 destinationId = destinationId,
+                itineraryDayId = itineraryDayId,
                 order = index,
                 date = item.date,
                 name = item.name,

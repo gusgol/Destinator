@@ -7,16 +7,25 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "itinerary_items",
-    foreignKeys = [ForeignKey(
-        entity = DestinationEntity::class,
-        parentColumns = arrayOf("id"),
-        childColumns = arrayOf("destination_id"),
-        onDelete = ForeignKey.CASCADE
-    )]
+    foreignKeys = [
+        ForeignKey(
+            entity = DestinationEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("destination_id"),
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = ItineraryDayEntity::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("itinerary_day_id"),
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class ItineraryItemEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "destination_id") val destinationId: Long,
+    @ColumnInfo(name = "itinerary_day_id") val itineraryDayId: Long,
     @ColumnInfo(name = "order") val order: Int,
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "name") val name: String,

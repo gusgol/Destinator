@@ -3,12 +3,12 @@ package me.goldhardt.destinator.core.database.model
 import androidx.room.Embedded
 import androidx.room.Relation
 
-data class DestinationWithItinerary(
-    @Embedded val destination: DestinationEntity,
+data class ItineraryDayWithItems(
+    @Embedded val itineraryDay: ItineraryDayEntity,
     @Relation(
         entity = ItineraryItemEntity::class,
         parentColumn = "id",
-        entityColumn = "destination_id"
+        entityColumn = "itinerary_day_id"
     )
-    val itinerary: List<ItineraryItemWithPhotos>
+    val itineraryItems: List<ItineraryItemWithPhotos>
 )

@@ -6,12 +6,14 @@ import me.goldhardt.destinator.core.database.dao.DestinationDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.dao.PhotoDao
 import me.goldhardt.destinator.core.database.model.DestinationEntity
+import me.goldhardt.destinator.core.database.model.ItineraryDayEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 import me.goldhardt.destinator.core.database.model.PhotoEntity
 
 @Database(
     entities = [
         DestinationEntity::class,
+        ItineraryDayEntity::class,
         ItineraryItemEntity::class,
         PhotoEntity::class,
     ],
