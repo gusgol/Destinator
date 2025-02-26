@@ -3,7 +3,8 @@ package me.goldhardt.destinator.data.model.itinerary
 import me.goldhardt.destinator.core.database.model.ItineraryItemWithPhotos
 
 class ItineraryItem(
-    val order: Int,
+    var id: Long,
+    var order: Int,
     val date: String,
     val name: String,
     val description: String,
@@ -27,6 +28,7 @@ class ItineraryItem(
 
 fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
     ItineraryItem(
+        id = itineraryItem.id,
         order = itineraryItem.order,
         date = itineraryItem.date,
         name = itineraryItem. name,

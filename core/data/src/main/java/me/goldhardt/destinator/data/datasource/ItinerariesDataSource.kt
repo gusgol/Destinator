@@ -6,4 +6,10 @@ interface ItinerariesDataSource {
     suspend fun createItinerary(
         destinationItinerary: AIGenerateItineraryResponse
     ): Long
+
+    suspend fun updateItineraryItemOrder(
+        itineraryDayId: Long,
+        itineraryItemId: Long,
+        offset: Int
+    )
 }

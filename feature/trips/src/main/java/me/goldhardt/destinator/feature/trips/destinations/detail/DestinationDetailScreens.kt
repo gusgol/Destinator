@@ -314,14 +314,22 @@ fun DestinationMap(
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(destinationCoordinates, 15f)
     }
-    val boundsBuilder = LatLngBounds.builder()
-    items.forEach { item ->
-        boundsBuilder.include(LatLng(item.latitude, item.longitude))
+
+    val bounds = LatLngBounds.builder().apply {
+        if (items.isEmpty()) {
+            include(destinationCoordinates)
+        } else {
+            items.forEach { item -> include(LatLng(item.latitude, item.longitude)) }
     }
-    val bounds = boundsBuilder.build()
+    }.build()
 
     LaunchedEffect(bounds) {
-        cameraPositionState.animate(CameraUpdateFactory.newLatLngBounds(bounds, 200), 1_000)
+        val cameraUpdate = if (items.isEmpty()) {
+            CameraUpdateFactory.newLatLngZoom(bounds.center, 13f)
+        } else {
+            CameraUpdateFactory.newLatLngBounds(bounds, 200)
+        }
+        cameraPositionState.animate(cameraUpdate, 1_000)
     }
 
     var isMyLocationEnabled by rememberSaveable { mutableStateOf(false) }
@@ -484,6 +492,7 @@ fun ItineraryItemPreview() {
         ItineraryItem(
             isFirst = true,
             item = ItineraryItem(
+                id = 0,
                 name = "Sample Destination",
                 description = "This is a sample description for a destination.",
                 iconUrl = "https://example.com/icon.png",

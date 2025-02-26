@@ -14,6 +14,8 @@
     <string name="cd_map_of">Map of %1$s</string>
     <string name="cd_select_destination">Select destination button</string>
     <string name="cd_edit_destination_and_itinerary">Edit destination and itinerary</string>
+    <string name="cd_move_up">Move up</string>
+    <string name="cd_move_down">Move down</string>
     <string name="error_failed_generate_itinerary">Failed to generate itinerary!</string>
     <string name="error_city_non_existent">We couldn\'t find any city with that name. Please, try again!</string>
     <string name="error_generic">Something went wrong, please try again!</string>
@@ -53,4 +55,5 @@
     <string name="destination_status_current">Current</string>
     <string name="destination_status_upcoming">Upcoming</string>
     <string name="destination_status_completed">Completed</string>
+
 </resources>

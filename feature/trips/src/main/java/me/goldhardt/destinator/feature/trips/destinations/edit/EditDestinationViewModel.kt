@@ -8,8 +8,11 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
+import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
 import me.goldhardt.destinator.data.repository.DestinationsRepository
+import me.goldhardt.destinator.data.repository.ItinerariesRepository
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
 import javax.inject.Inject
 
@@ -25,7 +28,8 @@ sealed interface EditDestinationUiState {
 @HiltViewModel
 class EditDestinationViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    destinationsRepository: DestinationsRepository
+    destinationsRepository: DestinationsRepository,
+    private val itinerariesRepository: ItinerariesRepository
 ) : ViewModel() {
 
     private val destinationId: Long = checkNotNull(savedStateHandle[DESTINATION_ID])
@@ -43,4 +47,25 @@ class EditDestinationViewModel @Inject constructor(
                 initialValue = EditDestinationUiState.Loading,
             )
 
+    fun moveItineraryUp(itineraryDay: ItineraryDay, itineraryItem: ItineraryItem) {
+        val offset = -1
+        viewModelScope.launch {
+            itinerariesRepository.updateItineraryItemOrder(
+                itineraryDay.id,
+                itineraryItem.id,
+                offset
+            )
+        }
+    }
+
+    fun moveItineraryDown(itineraryDay: ItineraryDay, itineraryItem: ItineraryItem) {
+        val offset = +1
+        viewModelScope.launch {
+            itinerariesRepository.updateItineraryItemOrder(
+                itineraryDay.id,
+                itineraryItem.id,
+                offset
+            )
+        }
+    }
 }
