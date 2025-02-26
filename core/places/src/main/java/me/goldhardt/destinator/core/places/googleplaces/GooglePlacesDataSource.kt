@@ -41,10 +41,10 @@ class GooglePlacesDataSource @Inject constructor(
     ): PlaceMetadata? = suspendCancellableCoroutine { continuation ->
         val placeMetadataFields = listOf(
             Place.Field.ID,
-            Place.Field.NAME,
+            Place.Field.DISPLAY_NAME,
             Place.Field.PHOTO_METADATAS,
-            Place.Field.ICON_URL,
-            Place.Field.LAT_LNG
+            Place.Field.ICON_MASK_URL,
+            Place.Field.LOCATION
         )
         val searchRequest = SearchByTextRequest.builder(query, placeMetadataFields)
             .setMaxResultCount(1)
@@ -59,9 +59,9 @@ class GooglePlacesDataSource @Inject constructor(
                         val photos = place.photoMetadatas?.take(MAX_PHOTOS)
                         PlaceMetadata(
                             sourceId = place.id.orEmpty(),
-                            iconUrl = place.iconUrl,
-                            latitude = place.latLng?.latitude,
-                            longitude = place.latLng?.longitude,
+                            iconUrl = place.iconMaskUrl,
+                            latitude = place.location?.latitude,
+                            longitude = place.location?.longitude,
                             photosReferences = photos?.map { photoMetadata ->
                                 photoMetadata.zza()
                             } ?: listOf()
