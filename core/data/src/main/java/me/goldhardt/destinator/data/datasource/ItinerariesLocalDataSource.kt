@@ -182,13 +182,11 @@ class ItinerariesLocalDataSource @Inject constructor(
                 destinationId = destinationId,
                 itineraryDayId = itineraryDayId,
                 order = index,
-                date = item.date,
                 name = item.name,
                 description = item.description,
                 latitude = place?.latitude ?: item.latitude,
                 longitude = place?.longitude ?: item.longitude,
                 visitTimeMin = item.visitTimeMin,
-                tripDay = item.tripDay,
                 iconUrl = place?.iconUrl,
                 metadataSourceId = place?.sourceId
             ).also {

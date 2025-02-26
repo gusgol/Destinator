@@ -281,10 +281,8 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-02",
                                 metadataSourceId = "123",
-                                order = 1,
-                                tripDay = 2,
+                                order = 0,
                                 visitTimeMin = 60
                             ),
                             ItineraryItem(
@@ -294,10 +292,8 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-02",
                                 metadataSourceId = "123",
                                 order = 1,
-                                tripDay = 2,
                                 visitTimeMin = 60
                             )
                         )
@@ -314,10 +310,8 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-02",
                                 metadataSourceId = "123",
-                                order = 1,
-                                tripDay = 2,
+                                order = 0,
                                 visitTimeMin = 60
                             ),
                             ItineraryItem(
@@ -327,10 +321,8 @@ fun EditDestinationScreenPreview() {
                                 iconUrl = "https://example.com/icon.png",
                                 latitude = 0.0,
                                 longitude = 0.0,
-                                date = "2023-04-02",
                                 metadataSourceId = "123",
                                 order = 1,
-                                tripDay = 2,
                                 visitTimeMin = 60
                             )
                         )

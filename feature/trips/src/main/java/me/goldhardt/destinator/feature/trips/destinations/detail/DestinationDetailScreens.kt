@@ -498,10 +498,8 @@ fun ItineraryItemPreview() {
                 iconUrl = "https://example.com/icon.png",
                 latitude = 0.0,
                 longitude = 0.0,
-                date = "2023-04-01",
                 metadataSourceId = "123",
                 order = 1,
-                tripDay = 1,
                 visitTimeMin = 60
             )
         )

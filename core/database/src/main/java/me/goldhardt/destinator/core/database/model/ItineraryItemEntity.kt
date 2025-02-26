@@ -27,13 +27,11 @@ data class ItineraryItemEntity(
     @ColumnInfo(name = "destination_id") val destinationId: Long,
     @ColumnInfo(name = "itinerary_day_id") val itineraryDayId: Long,
     @ColumnInfo(name = "order") val order: Int,
-    @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "description") val description: String,
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "latitude") val latitude: Double,
     @ColumnInfo(name = "visit_time_min") val visitTimeMin: Int,
-    @ColumnInfo(name = "trip_day") val tripDay: Int,
     @ColumnInfo(name = "icon_url") val iconUrl: String?,
     @ColumnInfo(name = "metadata_source_id") val metadataSourceId: String?
 )
