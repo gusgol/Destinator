@@ -12,6 +12,8 @@ import me.goldhardt.destinator.core.database.model.PhotoEntity
 import me.goldhardt.destinator.core.places.PlacesDataSource
 import me.goldhardt.destinator.data.model.itinerary.AICreatedItineraryItem
 import me.goldhardt.destinator.data.model.itinerary.AIGenerateItineraryResponse
+import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
+import me.goldhardt.destinator.data.model.itinerary.toItineraryItemEntity
 import javax.inject.Inject
 
 class ItinerariesLocalDataSource @Inject constructor(
@@ -25,6 +27,27 @@ class ItinerariesLocalDataSource @Inject constructor(
         val destinationId = insertDestination(destinationItinerary)
         insertItineraryDays(destinationId, destinationItinerary.itinerary)
         return destinationId
+    }
+
+    override suspend fun insertItinerary(
+        destinationId: Long,
+        itineraryDayId: Long,
+        itinerary: ItineraryItem
+    ): Long {
+        val itineraryEntity = itinerary.toItineraryItemEntity(
+            destinationId = destinationId,
+            itineraryDayId = itineraryDayId
+        )
+        val itineraryItemItemId = itineraryDao.insertItinerary(itineraryEntity)
+        val photos = itinerary.photos.map { photo ->
+            PhotoEntity(
+                parentId = itineraryItemItemId,
+                reference = photo,
+                source = PhotoSource.GOOGLE_PLACES
+            )
+        }
+        photoDao.insertPhotos(photos)
+        return itineraryItemItemId
     }
 
     /**
@@ -69,7 +92,10 @@ class ItinerariesLocalDataSource @Inject constructor(
         if (itineraryDay.itineraryDay.day == 1) return
 
         val previousDay =
-            itineraryDao.getItineraryByDay(itineraryDay.itineraryDay.day - 1) ?: return
+            itineraryDao.getItineraryByDay(
+                itineraryDay.itineraryDay.destinationId,
+                itineraryDay.itineraryDay.day - 1
+            ) ?: return
 
         val updatedItineraryItem = itineraryItem.copy(
             itineraryDayId = previousDay.itineraryDay.id,
@@ -84,7 +110,10 @@ class ItinerariesLocalDataSource @Inject constructor(
         itineraryDay: ItineraryDayWithItems,
         itineraryItem: ItineraryItemEntity
     ) {
-        val nextDay = itineraryDao.getItineraryByDay(itineraryDay.itineraryDay.day + 1) ?: return
+        val nextDay = itineraryDao.getItineraryByDay(
+            itineraryDay.itineraryDay.destinationId,
+            itineraryDay.itineraryDay.day + 1
+        ) ?: return
 
         val updatedItineraryItem = itineraryItem.copy(
             itineraryDayId = nextDay.itineraryDay.id,

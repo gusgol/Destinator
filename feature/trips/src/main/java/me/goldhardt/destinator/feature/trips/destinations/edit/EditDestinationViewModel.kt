@@ -21,7 +21,6 @@ sealed interface EditDestinationUiState {
     data class Success(
         val itineraryDays: List<ItineraryDay>,
     ) : EditDestinationUiState
-
     data object Failed : EditDestinationUiState
 }
 

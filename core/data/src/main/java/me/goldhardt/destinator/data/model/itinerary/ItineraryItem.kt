@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.data.model.itinerary
 
+import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemWithPhotos
 
 class ItineraryItem(
@@ -28,7 +29,7 @@ fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
     ItineraryItem(
         id = itineraryItem.id,
         order = itineraryItem.order,
-        name = itineraryItem. name,
+        name = itineraryItem.name,
         description = itineraryItem.description,
         longitude = itineraryItem.longitude,
         latitude = itineraryItem.latitude,
@@ -36,4 +37,21 @@ fun ItineraryItemWithPhotos.toItineraryItem(): ItineraryItem =
         iconUrl = itineraryItem.iconUrl,
         metadataSourceId = itineraryItem.metadataSourceId,
         photos = photos.map { it.reference }
+    )
+
+fun ItineraryItem.toItineraryItemEntity(
+    destinationId: Long,
+    itineraryDayId: Long,
+): ItineraryItemEntity =
+    ItineraryItemEntity(
+        destinationId = destinationId,
+        itineraryDayId = itineraryDayId,
+        order = order,
+        name = name,
+        description = description,
+        longitude = longitude,
+        latitude = latitude,
+        visitTimeMin = visitTimeMin,
+        iconUrl = iconUrl,
+        metadataSourceId = metadataSourceId
     )

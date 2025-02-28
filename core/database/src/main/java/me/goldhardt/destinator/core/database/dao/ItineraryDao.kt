@@ -44,6 +44,9 @@ interface ItineraryDao {
         itineraryDayId: Long
     ): ItineraryDayWithItems?
 
-    @Query("SELECT * FROM itinerary_days WHERE day = :day")
-    suspend fun getItineraryByDay(day: Int): ItineraryDayWithItems?
+    @Query("SELECT * FROM itinerary_days WHERE day = :day AND destination_id = :destinationId")
+    suspend fun getItineraryByDay(
+        destinationId: Long,
+        day: Int
+    ): ItineraryDayWithItems?
 }

@@ -12,4 +12,16 @@ interface PlacesDataSource {
         latitude: Double,
         longitude: Double,
     ): PlaceMetadata?
+
+    /**
+     * Get a list of places from a query and close from the coordinates provided.
+     * @param query The query to search for.
+     * @param latitude Latitude location bias.
+     * @param longitude Latitude location bias.
+     */
+    suspend fun getPlaces(
+        query: String,
+        latitude: Double,
+        longitude: Double,
+    ): List<PlaceMetadata>
 }

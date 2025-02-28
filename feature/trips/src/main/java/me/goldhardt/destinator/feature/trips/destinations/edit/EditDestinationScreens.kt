@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,6 +31,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -50,6 +53,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import me.goldhardt.destinator.core.designsystem.components.ErrorScreen
+import me.goldhardt.destinator.core.designsystem.components.LoadingScreen
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
@@ -58,25 +63,27 @@ import me.goldhardt.destinator.feature.trips.R
 import me.goldhardt.destinator.feature.trips.destinations.detail.getVisitTime
 
 @Composable
-fun EditDestinationScreens(viewModel: EditDestinationViewModel = hiltViewModel()) {
-
+fun EditDestinationScreens(
+    viewModel: EditDestinationViewModel = hiltViewModel(),
+    onAddPlaceClick: (ItineraryDay) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
     when (val state = uiState) {
         is EditDestinationUiState.Loading -> {
-            // Loading state
+            LoadingScreen(R.string.title_loading)
         }
 
         is EditDestinationUiState.Success -> {
             EditDestinationScreen(
                 state = state,
                 onMoveUpClick = viewModel::moveItineraryUp,
-                onMoveDownClick = viewModel::moveItineraryDown
+                onMoveDownClick = viewModel::moveItineraryDown,
+                onAddPlaceClick = onAddPlaceClick
             )
         }
 
         is EditDestinationUiState.Failed -> {
-            // Failed state
+            ErrorScreen(R.string.error_generic)
         }
     }
 }
@@ -85,9 +92,10 @@ fun EditDestinationScreens(viewModel: EditDestinationViewModel = hiltViewModel()
 internal fun EditDestinationScreen(
     state: EditDestinationUiState.Success,
     onMoveUpClick: (ItineraryDay, ItineraryItem) -> Unit,
-    onMoveDownClick: (ItineraryDay, ItineraryItem) -> Unit
+    onMoveDownClick: (ItineraryDay, ItineraryItem) -> Unit,
+    onAddPlaceClick: (ItineraryDay) -> Unit
 ) {
-    Column(
+    Box(
         modifier = Modifier
             .padding(WindowInsets.statusBars.only(WindowInsetsSides.Top).asPaddingValues())
             .background(color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.5f))
@@ -111,8 +119,35 @@ internal fun EditDestinationScreen(
                         }
                     )
                 }
+                item {
+                    AddPlaceButton {
+                        onAddPlaceClick(day)
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+internal fun AddPlaceButton(
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(start = 16.dp)
+            .fillMaxWidth(),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onBackground
+        )
+    ) {
+        Text(
+            text = stringResource(R.string.action_add_place),
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
 }
 
@@ -267,6 +302,7 @@ fun EditDestinationScreenPreview() {
         EditDestinationScreen(
             onMoveDownClick = { _, _ -> },
             onMoveUpClick = { _, _ -> },
+            onAddPlaceClick = {},
             state = EditDestinationUiState.Success(
                 itineraryDays = listOf(
                     ItineraryDay(
