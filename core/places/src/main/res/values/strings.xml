@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_search">Search…</string>
+    <string name="title_add_place_idle">Use the search bar to find your places</string>
+    <string name="title_add_place_no_results">Could not find the desired place</string>
+    <string name="error_add_place_search">Failed to find your place, please try again</string>
+</resources>

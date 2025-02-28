@@ -11,6 +11,7 @@
     <string name="action_enter_fullscreen">Enter fullscreen</string>
     <string name="action_exit_fullscreen">Exit fullscreen</string>
     <string name="action_edit">Edit</string>
+    <string name="action_add_place">Add place</string>
     <string name="cd_map_of">Map of %1$s</string>
     <string name="cd_select_destination">Select destination button</string>
     <string name="cd_edit_destination_and_itinerary">Edit destination and itinerary</string>
@@ -37,6 +38,7 @@
     <string name="title_select_one_destination">Which one?</string>
     <string name="title_searching">Searching…</string>
     <string name="title_loading">Loading…</string>
+    <string name="title_add_place_day">Day %1$s - %2$s</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>
@@ -55,5 +57,4 @@
     <string name="destination_status_current">Current</string>
     <string name="destination_status_upcoming">Upcoming</string>
     <string name="destination_status_completed">Completed</string>
-
 </resources>

@@ -2,6 +2,7 @@
 
 package me.goldhardt.destinator.feature.trips
 
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavGraphBuilder
@@ -10,11 +11,13 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
+import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.GENERATING_ITINERARY
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DATES
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_TRIP_STYLE
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.VALIDATE_DESTINATION
+import me.goldhardt.destinator.feature.trips.destinations.addplace.AddPlace
 import me.goldhardt.destinator.feature.trips.destinations.create.GeneratingItinerary
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDestination
@@ -33,10 +36,13 @@ const val TITLE = "title"
 const val DESTINATIONS_ROUTE = "trips"
 const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
 const val DESTINATION_ID = "destinationId"
+const val ITINERARY_DAY_ID = "itineraryDayId"
 const val DESTINATION_DETAIL = "$DESTINATIONS_ROUTE/detail"
 const val DESTINATION_DETAIL_ROUTE = "$DESTINATION_DETAIL/{$DESTINATION_ID}?$TITLE={$TITLE}"
 const val DESTINATION_EDIT = "$DESTINATIONS_ROUTE/edit"
 const val DESTINATION_EDIT_ROUTE = "$DESTINATION_EDIT/{$DESTINATION_ID}?$TITLE={$TITLE}"
+const val DESTINATION_ADD_PLACE_ROUTE =
+    "$DESTINATION_EDIT/{$DESTINATION_ID}/addPlace/{$ITINERARY_DAY_ID}?$TITLE={$TITLE}"
 
 /**
  * Nested navigation for create trip
@@ -104,8 +110,39 @@ fun NavGraphBuilder.tripsScreens(
         arguments = listOf(
             navArgument(DESTINATION_ID) { type = NavType.LongType },
         )
+    ) { backStackEntry ->
+        backStackEntry.arguments?.getLong(DESTINATION_ID)?.let { destinationId ->
+            val context = LocalContext.current
+            EditDestinationScreens(
+                onAddPlaceClick = { itineraryDay ->
+                    navController.navigateToAddPlace(
+                        destinationId = destinationId,
+                        itineraryDayId = itineraryDay.id,
+                        day = context.getString(
+                            R.string.title_add_place_day,
+                            itineraryDay.day.toString(),
+                            formatDate(itineraryDay.date)
+                        )
+                    )
+                }
+            )
+        }
+    }
+    composable(
+        route = DESTINATION_ADD_PLACE_ROUTE,
+        arguments = listOf(
+            navArgument(DESTINATION_ID) { type = NavType.LongType },
+            navArgument(ITINERARY_DAY_ID) { type = NavType.LongType },
+            navArgument(TITLE) {
+                defaultValue = null
+                nullable = true
+                type = NavType.StringType
+            }
+        )
     ) {
-        EditDestinationScreens()
+        AddPlace {
+            navController.popBackStack()
+        }
     }
 }
 
@@ -132,4 +169,16 @@ fun NavController.navigateToDestinationEdit(
     city: String? = null
 ) {
     navigate("$DESTINATION_EDIT/$destinationId?$TITLE=$city")
+}
+
+/**
+ * Navigate to the add place screen.
+ * @param destinationId The id of the destination to edit.
+ */
+fun NavController.navigateToAddPlace(
+    destinationId: Long,
+    itineraryDayId: Long,
+    day: String? = null
+) {
+    navigate("$DESTINATION_EDIT/$destinationId/addPlace/$itineraryDayId?$TITLE=$day")
 }
