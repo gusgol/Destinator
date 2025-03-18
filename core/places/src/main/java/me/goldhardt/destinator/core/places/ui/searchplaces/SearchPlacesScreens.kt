@@ -43,10 +43,10 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import me.goldhardt.destinator.core.designsystem.AllPreviews
 import me.goldhardt.destinator.core.designsystem.components.PlacePhoto
 import me.goldhardt.destinator.core.designsystem.theme.DestinatorTheme
 import me.goldhardt.destinator.core.places.PlaceMetadata
@@ -84,7 +84,7 @@ internal fun SearchPlaces(
     ) {
         Box(
             modifier = Modifier
-                .background(color = MaterialTheme.colorScheme.background)
+                .background(color = MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
             SearchBar(
@@ -112,9 +112,6 @@ internal fun SearchPlaces(
                 },
                 expanded = false,
                 onExpandedChange = {},
-                colors = SearchBarDefaults.colors(
-                    containerColor = backgroundColor,
-                ),
             ) {}
         }
         when (uiState) {
@@ -257,7 +254,8 @@ private fun PlaceItem(
     }
 }
 
-@Preview(showBackground = true)
+
+@AllPreviews
 @Composable
 private fun PlacesListPreview() {
     DestinatorTheme {

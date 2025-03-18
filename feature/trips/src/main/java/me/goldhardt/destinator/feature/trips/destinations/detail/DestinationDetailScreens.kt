@@ -1,5 +1,6 @@
 package me.goldhardt.destinator.feature.trips.destinations.detail
 
+import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
@@ -7,22 +8,27 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryScrollableTabRow
@@ -40,8 +46,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -74,6 +82,8 @@ import me.goldhardt.destinator.data.extensions.formatDate
 import me.goldhardt.destinator.data.model.destination.Destination
 import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
 import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
+import me.goldhardt.destinator.data.model.places.InterestPlace
+import me.goldhardt.destinator.data.model.places.PlaceType
 import me.goldhardt.destinator.feature.trips.DESTINATION_DETAIL_ROUTE
 import me.goldhardt.destinator.feature.trips.R
 import java.time.Duration
@@ -82,7 +92,8 @@ import java.time.LocalTime
 @Composable
 fun DestinationDetail(
     destinationDetailViewModel: DestinationDetailViewModel = hiltViewModel(),
-    onEditClick: (Destination) -> Unit
+    onEditClick: (Destination) -> Unit,
+    onAddClick: (Destination, PlaceType) -> Unit,
 ) {
     val uiState by destinationDetailViewModel.uiState.collectAsStateWithLifecycle()
     when (val state = uiState) {
@@ -97,7 +108,8 @@ fun DestinationDetail(
         is DestinationDetailUiState.Success -> {
             DestinationDetail(
                 uiState = state,
-                onEditClick = onEditClick
+                onEditClick = onEditClick,
+                onAddClick = onAddClick,
             )
         }
     }
@@ -106,10 +118,16 @@ fun DestinationDetail(
 @Composable
 fun DestinationDetail(
     uiState: DestinationDetailUiState.Success,
-    onEditClick: (Destination) -> Unit
+    onEditClick: (Destination) -> Unit,
+    onAddClick: (Destination, PlaceType) -> Unit,
 ) {
     var selectedTab by rememberSaveable { mutableIntStateOf(0) }
-    val selectedItems = uiState.destination.itineraryDays[selectedTab].items
+    var tabType by rememberSaveable { mutableIntStateOf(DestinationTab.ITINERARY) }
+
+    /**
+     * If selected tab is not an itinerary day (Dining, Shopping), list should be empty
+     */
+    val selectedItems = uiState.destination.itineraryDays.getOrNull(selectedTab)?.items.orEmpty()
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
     var isFullscreen by rememberSaveable { mutableStateOf(false) }
     val mapSize: Float by animateFloatAsState(if (isFullscreen) 1f else 2.4f, label = "mapSize")
@@ -142,13 +160,108 @@ fun DestinationDetail(
             ItineraryTabs(
                 uiState = uiState,
                 selectedTab = selectedTab,
-                onTabSelected = {
-                    selectedTab = it
+                onTabSelected = { index, type ->
+                    selectedTab = index
+                    tabType = type.type
                 },
                 onEditClick = onEditClick
             )
-            DayItinerary(
-                items = selectedItems
+            when (tabType) {
+                DestinationTab.ITINERARY -> DayItinerary(
+                    items = selectedItems
+                )
+
+                DestinationTab.DINING -> InterestPlacesContent(
+                    places = uiState.destination.interestPlaces.filter {
+                        it.type == PlaceType.Dining
+                    },
+                    onAddClick = {
+                        onAddClick(uiState.destination, PlaceType.Dining)
+                    }
+                )
+
+                DestinationTab.SHOPPING -> InterestPlacesContent(
+                    places = uiState.destination.interestPlaces.filter {
+                        it.type == PlaceType.Shop
+                    },
+                    onAddClick = {
+                        onAddClick(uiState.destination, PlaceType.Shop)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun InterestPlacesContent(
+    places: List<InterestPlace>,
+    onAddClick: () -> Unit = {}
+) {
+    val context = LocalContext.current
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        if (places.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    stringResource(R.string.title_you_haven_t_added_any_places_yet),
+                    style = MaterialTheme.typography.labelLarge,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        } else {
+            LazyColumn {
+                items(places) { place ->
+                    Row(
+                        modifier = Modifier.clickable {
+                            place.mapProviderUri?.let {
+                                openGoogleMaps(context, it)
+                            }
+                        }
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(top = 8.dp)
+                        ) {
+                            ElevatedIcon(
+                                iconUrl = place.iconUrl.orEmpty(),
+                                modifier = Modifier
+                                    .padding(8.dp)
+                                    .size(20.dp),
+                            )
+                        }
+                        val description = if (place.description.isNotBlank()) {
+                            "${place.description}\n${place.address}"
+                        } else {
+                            place.address
+                        }
+                        ListItem(
+                            title = place.name,
+                            subtitle = description,
+                            photosUrls = emptyList(), //TODO Right now the query does not know how to retrieve the photo for the InterestPlace (instead of Place, since both can have the same ids).
+                        )
+                    }
+                }
+            }
+        }
+        FilledTonalButton(
+            onClick = {
+                onAddClick()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.small
+        ) {
+            Text(
+                stringResource(R.string.action_add_place),
+                style = MaterialTheme.typography.titleMedium,
             )
         }
     }
@@ -198,12 +311,47 @@ fun DetailLayout(
     }
 }
 
+
+internal sealed interface DestinationTab {
+    companion object {
+        const val ITINERARY = 0
+        const val DINING = 1
+        const val SHOPPING = 2
+    }
+
+    val content: @Composable () -> Unit
+    val type: Int
+
+    data class Itinerary(
+        val itineraryDay: ItineraryDay
+    ) : DestinationTab {
+        override val content: @Composable () -> Unit = {
+            ItineraryDayTab(itineraryDay)
+        }
+        override val type: Int = ITINERARY
+    }
+
+    data object Dining : DestinationTab {
+        override val content: @Composable () -> Unit = {
+            DiningTab()
+        }
+        override val type: Int = DINING
+    }
+
+    data object Shopping : DestinationTab {
+        override val content: @Composable () -> Unit = {
+            ShopTab()
+        }
+        override val type: Int = SHOPPING
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ItineraryTabs(
+internal fun ItineraryTabs(
     uiState: DestinationDetailUiState.Success,
     selectedTab: Int,
-    onTabSelected: (Int) -> Unit,
+    onTabSelected: (Int, DestinationTab) -> Unit,
     onEditClick: (Destination) -> Unit
 ) {
     SecondaryScrollableTabRow(
@@ -213,16 +361,24 @@ fun ItineraryTabs(
         indicator = {
         }
     ) {
-        uiState.destination.itineraryDays.forEachIndexed { index, tripDay ->
+        val tabs = uiState.destination.itineraryDays.map { DestinationTab.Itinerary(it) } + listOf(
+            DestinationTab.Dining,
+            DestinationTab.Shopping
+        )
+        tabs.forEachIndexed { index, tab ->
             val isSelected = selectedTab == index
             val tabBackgroundColor = if (isSelected) {
                 MaterialTheme.colorScheme.primary
             } else {
-                MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                if (tab.type == DestinationTab.ITINERARY) {
+                    MaterialTheme.colorScheme.outline.copy(alpha = 0.1f)
+                } else {
+                    MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.5f)
+                }
             }
             Tab(
                 selected = isSelected,
-                onClick = { onTabSelected(index) },
+                onClick = { onTabSelected(index, tab) },
                 selectedContentColor = MaterialTheme.colorScheme.surface,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
@@ -231,7 +387,7 @@ fun ItineraryTabs(
                     .width(120.dp)
                     .height(80.dp),
                 text = {
-                    ItineraryDayTab(tripDay)
+                    tab.content()
                 }
             )
         }
@@ -303,6 +459,41 @@ private fun EditTab() {
     }
 }
 
+@Composable
+private fun DiningTab() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_dining),
+            contentDescription = stringResource(R.string.title_dining),
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = stringResource(R.string.title_dining),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+private fun ShopTab() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ShoppingCart,
+            contentDescription = stringResource(R.string.title_shopping),
+            modifier = Modifier.size(24.dp)
+        )
+        Text(
+            text = stringResource(R.string.title_shopping),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -385,7 +576,7 @@ fun DayItinerary(
 }
 
 @Composable
-fun ItineraryItem(
+internal fun ItineraryItem(
     isFirst: Boolean,
     item: ItineraryItem
 ) {
@@ -396,8 +587,7 @@ fun ItineraryItem(
             .height(IntrinsicSize.Min)
             .clickable(onClick = {
                 item.mapProviderUri?.let {
-                    val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
-                    context.startActivity(mapIntent)
+                    openGoogleMaps(context, it)
                 }
             })
     ) {
@@ -421,45 +611,64 @@ fun ItineraryItem(
                 modifier = Modifier.fillMaxHeight()
             )
         }
+        ListItem(
+            title = item.name,
+            subtitle = item.description,
+            label = stringResource(R.string.title_visit_time, item.getVisitTime()),
+            photosUrls = item.photos,
+        )
+    }
+}
 
-        Column(
-            modifier =
-                Modifier.padding(
-                    start = 16.dp,
-                    end = 0.dp,
-                    top = 8.dp,
-                    bottom = 8.dp
-                )
-        ) {
+@Composable
+internal fun ListItem(
+    title: String,
+    subtitle: String,
+    label: String? = null,
+    displayDivider: Boolean = true,
+    photosUrls: List<String>,
+) {
+    Column(
+        modifier =
+        Modifier.padding(
+            start = 16.dp,
+            end = 0.dp,
+            top = 8.dp,
+            bottom = 8.dp
+        )
+    ) {
+        label?.let {
             Text(
-                text = stringResource(R.string.title_visit_time, item.getVisitTime()),
+                text = it,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.65f),
                 maxLines = 1,
                 modifier = Modifier.padding(bottom = 2.dp)
             )
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+        }
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = subtitle,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+        if (photosUrls.isNotEmpty()) {
+            PlacePhotos(
+                photosReferences = photosUrls,
+                maxWidthPx = 200,
+                modifier = Modifier.padding(top = 16.dp)
             )
-            Text(
-                text = item.description,
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-            )
-            if (item.photos.isNotEmpty()) {
-                PlacePhotos(
-                    photosReferences = item.photos,
-                    maxWidthPx = 200,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-            } else {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        } else {
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+        if (displayDivider) {
             Spacer(modifier = Modifier.height(16.dp))
             SubtleHorizontalDivider()
         }
@@ -485,6 +694,11 @@ fun ItineraryItem.getVisitTime(): String {
     return displayDuration
 }
 
+private fun openGoogleMaps(context: Context, placeId: String) {
+    val mapIntent = Intent(Intent.ACTION_VIEW, Uri.parse(placeId))
+    context.startActivity(mapIntent)
+}
+
 @Preview(showBackground = true)
 @Composable
 fun ItineraryItemPreview() {
@@ -501,6 +715,41 @@ fun ItineraryItemPreview() {
                 metadataSourceId = "123",
                 order = 1,
                 visitTimeMin = 60
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DiningContentPreview() {
+    DestinatorTheme {
+        InterestPlacesContent(
+            places = listOf(
+                InterestPlace(
+                    id = 0,
+                    destinationId = 0,
+                    name = "Sample Place",
+                    description = "This is a sample description for a place.",
+                    longitude = 0.0,
+                    latitude = 0.0,
+                    address = "123 Sample St, Sample City",
+                    type = PlaceType.Dining,
+                    iconUrl = "https://example.com/icon.png",
+                    metadataSourceId = "123"
+                ),
+                InterestPlace(
+                    id = 1,
+                    destinationId = 0,
+                    name = "Another Place",
+                    description = "This is another sample description for a place.",
+                    longitude = 0.0,
+                    latitude = 0.0,
+                    address = "456 Another St, Another City",
+                    type = PlaceType.Dining,
+                    iconUrl = "https://example.com/icon.png",
+                    metadataSourceId = "456"
+                )
             )
         )
     }

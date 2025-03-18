@@ -4,6 +4,8 @@ import me.goldhardt.destinator.core.database.model.DestinationWithItineraryDays
 import me.goldhardt.destinator.data.R
 import me.goldhardt.destinator.data.model.itinerary.ItineraryDay
 import me.goldhardt.destinator.data.model.itinerary.toItineraryDay
+import me.goldhardt.destinator.data.model.places.InterestPlace
+import me.goldhardt.destinator.data.model.places.toInterestPlace
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -18,7 +20,8 @@ data class Destination(
     val thumbnail: String,
     val itineraryDays: List<ItineraryDay>,
     val itineraryCount: Int,
-    val status: DestinationStatus
+    val status: DestinationStatus,
+    val interestPlaces: List<InterestPlace>,
 )
 
 enum class DestinationStatus(val displayName: Int) {
@@ -42,7 +45,8 @@ fun DestinationWithItineraryDays.toDestination(): Destination {
         thumbnail = destination.thumbnail,
         itineraryDays = itineraryDays,
         itineraryCount = itineraryItemsCount,
-        status = determineDestinationStatus(destination.from, destination.to)
+        status = determineDestinationStatus(destination.from, destination.to),
+        interestPlaces = interestPlaces.map { it.toInterestPlace() }
     )
 }
 

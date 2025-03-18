@@ -11,28 +11,24 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.goldhardt.destinator.core.places.PlaceMetadata
 import me.goldhardt.destinator.data.model.destination.Destination
-import me.goldhardt.destinator.data.model.itinerary.ItineraryItem
+import me.goldhardt.destinator.data.model.places.InterestPlace
+import me.goldhardt.destinator.data.model.places.PlaceType
 import me.goldhardt.destinator.data.repository.DestinationsRepository
-import me.goldhardt.destinator.data.repository.ItinerariesRepository
+import me.goldhardt.destinator.data.repository.InterestPlaceRepository
 import me.goldhardt.destinator.feature.trips.DESTINATION_ID
-import me.goldhardt.destinator.feature.trips.ITINERARY_DAY_ID
+import me.goldhardt.destinator.feature.trips.TYPE
 import javax.inject.Inject
 
-sealed interface AddPlaceUiState {
-    data object Idle : AddPlaceUiState
-    data object Saving : AddPlaceUiState
-    data object Saved : AddPlaceUiState
-}
-
 @HiltViewModel
-class AddPlaceViewModel @Inject constructor(
+class AddInterestPlaceViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     destinationsRepository: DestinationsRepository,
-    private val itinerariesRepository: ItinerariesRepository
+    private val interestPlaceRepository: InterestPlaceRepository
 ) : ViewModel() {
 
     private val destinationId: Long = checkNotNull(savedStateHandle[DESTINATION_ID])
-    private val itineraryDayId: Long = checkNotNull(savedStateHandle[ITINERARY_DAY_ID])
+    private val placeType: PlaceType =
+        PlaceType.valueOf(checkNotNull(savedStateHandle[TYPE])) // TODO Check if needed
     val destination: StateFlow<Destination?> =
         destinationsRepository.getDestination(destinationId)
             .stateIn(
@@ -46,29 +42,23 @@ class AddPlaceViewModel @Inject constructor(
 
     fun addPlace(place: PlaceMetadata) {
         _uiState.value = AddPlaceUiState.Saving
-        val destination = destination.value ?: return
-        val order = destination.itineraryDays.find {
-            it.id == itineraryDayId
-        }?.items?.size ?: Int.MAX_VALUE
-
         viewModelScope.launch {
-            itinerariesRepository.insertItinerary(
-                destinationId,
-                itineraryDayId,
-                ItineraryItem(
-                    id = 0, // Temp Id - won't be used to generate the entity
+            interestPlaceRepository.insertInterestPlace(
+                InterestPlace(
+                    id = 0,
                     name = place.displayName.orEmpty(),
-                    order = order,
-                    description = place.description ?: place.address.orEmpty(),
-                    longitude = place.longitude ?: destination.longitude,
-                    latitude = place.latitude ?: destination.latitude,
-                    visitTimeMin = -1, // TODO find a way to get the correct visit time
-                    iconUrl = place.iconUrl,
-                    metadataSourceId = place.sourceId,
-                    photos = place.photosReferences.orEmpty()
+                    address = place.address.orEmpty(),
+                    latitude = place.latitude ?: 0.0,
+                    longitude = place.longitude ?: 0.0,
+                    photos = place.photosReferences.orEmpty(),
+                    destinationId = destinationId,
+                    description = place.description.orEmpty(),
+                    type = placeType,
+                    iconUrl = place.iconUrl.orEmpty(),
+                    metadataSourceId = place.sourceId
                 )
             )
-            _uiState.value = AddPlaceUiState.Saved
+            _uiState.emit(AddPlaceUiState.Saved)
         }
     }
 }

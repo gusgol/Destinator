@@ -2,6 +2,7 @@
 
 package me.goldhardt.destinator.feature.trips
 
+import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -12,11 +13,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import me.goldhardt.destinator.data.extensions.formatDate
+import me.goldhardt.destinator.data.model.places.PlaceType
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.GENERATING_ITINERARY
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DATES
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_DESTINATION
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.SELECT_TRIP_STYLE
 import me.goldhardt.destinator.feature.trips.CreateTripScreens.VALIDATE_DESTINATION
+import me.goldhardt.destinator.feature.trips.destinations.addplace.AddInterestPlace
 import me.goldhardt.destinator.feature.trips.destinations.addplace.AddPlace
 import me.goldhardt.destinator.feature.trips.destinations.create.GeneratingItinerary
 import me.goldhardt.destinator.feature.trips.destinations.create.SelectDates
@@ -33,6 +36,12 @@ import me.goldhardt.destinator.feature.trips.destinations.list.DestinationsRoute
  */
 const val TITLE = "title"
 
+/**
+ * Used to display the type of the place to add.
+ * @see AddPlace
+ */
+const val TYPE = "type"
+
 const val DESTINATIONS_ROUTE = "trips"
 const val CREATE_DESTINATION = "$DESTINATIONS_ROUTE/create"
 const val DESTINATION_ID = "destinationId"
@@ -43,6 +52,8 @@ const val DESTINATION_EDIT = "$DESTINATIONS_ROUTE/edit"
 const val DESTINATION_EDIT_ROUTE = "$DESTINATION_EDIT/{$DESTINATION_ID}?$TITLE={$TITLE}"
 const val DESTINATION_ADD_PLACE_ROUTE =
     "$DESTINATION_EDIT/{$DESTINATION_ID}/addPlace/{$ITINERARY_DAY_ID}?$TITLE={$TITLE}"
+const val DESTINATION_ADD_INTEREST_PLACE_ROUTE =
+    "$DESTINATION_EDIT/{$DESTINATION_ID}/addInterestPlace?$TYPE={$TYPE}&$TITLE={$TITLE}"
 
 /**
  * Nested navigation for create trip
@@ -101,9 +112,15 @@ fun NavGraphBuilder.tripsScreens(
             }
         )
     ) {
-        DestinationDetail { destination ->
-            navController.navigateToDestinationEdit(destination.id, destination.city)
-        }
+        val context = LocalContext.current
+        DestinationDetail(
+            onEditClick = { destination ->
+                navController.navigateToDestinationEdit(destination.id, destination.city)
+            },
+            onAddClick = { destination, type ->
+                navController.navigateToAddInterestPlace(context, destination.id, type)
+            },
+        )
     }
     composable(
         route = DESTINATION_EDIT_ROUTE,
@@ -144,6 +161,21 @@ fun NavGraphBuilder.tripsScreens(
             navController.popBackStack()
         }
     }
+    composable(
+        route = DESTINATION_ADD_INTEREST_PLACE_ROUTE,
+        arguments = listOf(
+            navArgument(DESTINATION_ID) { type = NavType.LongType },
+            navArgument(TITLE) {
+                defaultValue = null
+                nullable = true
+                type = NavType.StringType
+            }
+        )
+    ) {
+        AddInterestPlace {
+            navController.popBackStack()
+        }
+    }
 }
 
 /**
@@ -181,4 +213,26 @@ fun NavController.navigateToAddPlace(
     day: String? = null
 ) {
     navigate("$DESTINATION_EDIT/$destinationId/addPlace/$itineraryDayId?$TITLE=$day")
+}
+
+/**
+ * Navigate to the add interest place screen.
+ * @param destinationId The id of the destination to edit.
+ */
+fun NavController.navigateToAddInterestPlace(
+    context: Context,
+    destinationId: Long,
+    type: PlaceType
+) {
+    val title = when (type) {
+        PlaceType.Dining -> R.string.title_dining
+        PlaceType.Shop -> R.string.title_shopping
+    }
+    navigate(
+        "$DESTINATION_EDIT/$destinationId/addInterestPlace?$TYPE=${type.name}&$TITLE=${
+            context.getString(
+                title
+            )
+        }"
+    )
 }

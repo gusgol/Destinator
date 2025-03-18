@@ -39,6 +39,9 @@
     <string name="title_searching">Searching…</string>
     <string name="title_loading">Loading…</string>
     <string name="title_add_place_day">Day %1$s - %2$s</string>
+    <string name="title_dining">Dining</string>
+    <string name="title_shopping">Shopping</string>
+    <string name="title_you_haven_t_added_any_places_yet">You haven\'t added any places yet.</string>
 
     <!-- Trip Style options -->
     <string name="trip_style_must_see">Must See</string>

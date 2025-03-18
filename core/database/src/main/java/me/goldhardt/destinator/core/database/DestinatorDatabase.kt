@@ -3,9 +3,11 @@ package me.goldhardt.destinator.core.database
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import me.goldhardt.destinator.core.database.dao.DestinationDao
+import me.goldhardt.destinator.core.database.dao.InterestPlaceDao
 import me.goldhardt.destinator.core.database.dao.ItineraryDao
 import me.goldhardt.destinator.core.database.dao.PhotoDao
 import me.goldhardt.destinator.core.database.model.DestinationEntity
+import me.goldhardt.destinator.core.database.model.InterestPlaceEntity
 import me.goldhardt.destinator.core.database.model.ItineraryDayEntity
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
 import me.goldhardt.destinator.core.database.model.PhotoEntity
@@ -16,6 +18,7 @@ import me.goldhardt.destinator.core.database.model.PhotoEntity
         ItineraryDayEntity::class,
         ItineraryItemEntity::class,
         PhotoEntity::class,
+        InterestPlaceEntity::class
     ],
     version = 1
 )
@@ -23,4 +26,5 @@ abstract class DestinatorDatabase : RoomDatabase() {
     abstract fun destinationDao(): DestinationDao
     abstract fun itineraryDao(): ItineraryDao
     abstract fun photoDao(): PhotoDao
+    abstract fun interestPlaceDao(): InterestPlaceDao
 }

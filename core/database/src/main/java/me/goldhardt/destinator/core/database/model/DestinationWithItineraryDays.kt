@@ -10,5 +10,12 @@ data class DestinationWithItineraryDays(
         parentColumn = "id",
         entityColumn = "destination_id"
     )
-    val itineraryDays: List<ItineraryDayWithItems>
+    val itineraryDays: List<ItineraryDayWithItems>,
+
+    @Relation(
+        entity = InterestPlaceEntity::class,
+        parentColumn = "id",
+        entityColumn = "destination_id"
+    )
+    val interestPlaces: List<InterestPlaceWithPhotos>,
 )

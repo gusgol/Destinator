@@ -8,6 +8,7 @@ import me.goldhardt.destinator.core.database.model.DestinationEntity
 import me.goldhardt.destinator.core.database.model.ItineraryDayEntity
 import me.goldhardt.destinator.core.database.model.ItineraryDayWithItems
 import me.goldhardt.destinator.core.database.model.ItineraryItemEntity
+import me.goldhardt.destinator.core.database.model.ParentType
 import me.goldhardt.destinator.core.database.model.PhotoEntity
 import me.goldhardt.destinator.core.places.PlacesDataSource
 import me.goldhardt.destinator.data.model.itinerary.AICreatedItineraryItem
@@ -43,6 +44,7 @@ class ItinerariesLocalDataSource @Inject constructor(
             PhotoEntity(
                 parentId = itineraryItemItemId,
                 reference = photo,
+                parentType = ParentType.ITINERARY_ITEM.value,
                 source = PhotoSource.GOOGLE_PLACES
             )
         }
@@ -233,6 +235,7 @@ class ItinerariesLocalDataSource @Inject constructor(
             PhotoEntity(
                 parentId = itineraryItemId,
                 reference = ref,
+                parentType = ParentType.ITINERARY_ITEM.value,
                 source = PhotoSource.GOOGLE_PLACES
             )
         }.let { photos ->
