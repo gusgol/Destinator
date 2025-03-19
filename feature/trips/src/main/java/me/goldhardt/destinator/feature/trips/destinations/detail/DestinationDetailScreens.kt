@@ -147,10 +147,26 @@ fun DestinationDetail(
             .width(LocalConfiguration.current.screenWidthDp.div(mapSize).dp)
     }
 
+    val mapItems = when (tabType) {
+        DestinationTab.ITINERARY -> selectedItems.map { MapPlace.from(it) }
+
+        DestinationTab.DINING -> uiState.destination.interestPlaces
+            .filter { it.type == PlaceType.Dining }
+            .map { MapPlace.from(it) }
+
+        DestinationTab.SHOPPING -> uiState.destination.interestPlaces
+            .filter { it.type == PlaceType.Shop }
+            .map { MapPlace.from(it) }
+
+        else -> {
+            emptyList()
+        }
+    }
+
     DetailLayout(isPortrait) {
         DestinationMap(
             LatLng(uiState.destination.latitude, uiState.destination.longitude),
-            selectedItems,
+            mapItems,
             modifier = mapModifier
         )
         Column {
@@ -495,11 +511,35 @@ private fun ShopTab() {
     }
 }
 
+private data class MapPlace(
+    val latitude: Double,
+    val longitude: Double,
+    val name: String,
+) {
+    companion object {
+        fun from(interestPlace: InterestPlace): MapPlace {
+            return MapPlace(
+                latitude = interestPlace.latitude,
+                longitude = interestPlace.longitude,
+                name = interestPlace.name
+            )
+        }
+
+        fun from(itineraryItem: ItineraryItem): MapPlace {
+            return MapPlace(
+                latitude = itineraryItem.latitude,
+                longitude = itineraryItem.longitude,
+                name = itineraryItem.name
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun DestinationMap(
+private fun DestinationMap(
     destinationCoordinates: LatLng,
-    items: List<ItineraryItem>,
+    items: List<MapPlace>,
     modifier: Modifier = Modifier
 ) {
     val cameraPositionState = rememberCameraPositionState {
