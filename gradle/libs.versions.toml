@@ -1,20 +1,20 @@
 [versions]
 accompanist = "0.36.0"
-activityCompose = "1.10.0"
-agp = "8.8.1"
+activityCompose = "1.11.0"
+agp = "8.12.0"
 androidDesugarJdkLibs = "2.1.4"
 androidTools = "31.8.0"
 appcompat = "1.7.0"
 composeAnimation = "1.7.8"
-composeBom = "2025.02.00"
-coreKtx = "1.15.0"
-coil = "2.7.0"
+composeBom = "2025.06.00"
+coreKtx = "1.17.0"
+coil = "3.3.0"
 espressoCore = "3.6.1"
 gemini = "0.9.0"
 googleMaps = "6.1.0"
 googlePlaces = "4.1.0"
-hilt = "2.51.1"
-hiltNavigationCompose = "1.2.0"
+hilt = "2.57.2"
+hiltNavigationCompose = "1.3.0"
 jacoco = "0.8.7"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -22,11 +22,11 @@ kotlin = "2.0.0"
 kotlinSerialization = "1.7.1"
 kotlinSerializationPlugin = "2.0.0"
 ksp = "2.0.0-1.0.21"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.4"
 material = "1.12.0"
-navigation = "2.8.7"
-retrofit = "2.11.0"
-room = "2.6.1"
+navigation = "2.9.5"
+retrofit = "3.0.0"
+room = "2.8.2"
 uiTextGoogleFonts = "1.7.8"
 
 [libraries]
@@ -53,8 +53,8 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-coil = { group = "io.coil-kt", name = "coil", version = "coil" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 gemini = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "gemini" }
 google-maps = { group = "com.google.maps.android", name = "maps-compose", version.ref = "googleMaps" }
 google-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "googlePlaces" }
@@ -62,8 +62,8 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinSerialization" }
-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
-retrofit-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
+retrofit = { group = "com.squareup.retrofit3", name = "retrofit", version.ref = "retrofit" }
+retrofit-serialization = { group = "com.squareup.retrofit3", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
